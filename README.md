@@ -13,5 +13,5 @@ module.exports = {
 ```
 
 ### NPX 
-``` npx peggy -c .\config.js ```
+>``` npx peggy -c .\config.js ```
 
