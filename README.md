@@ -3,16 +3,15 @@
 
 # PEGGYJS
 npx peggy .\fileName.pegjs --format es
-
-<br/>
 # Config 
 Crear archivo config.js
-'''
+``` 
 module.exports = {
     format: 'es', 
     input: './operaciones.pegjs'
 }
-'''
+```
 
 ### NPX 
-''' npx peggy -c .\config.js'''
+``` npx peggy -c .\config.js ```
+
