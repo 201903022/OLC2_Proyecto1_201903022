@@ -2,7 +2,9 @@
 
 
 # PEGGYJS
- ``` npx peggy .\fileName.pegjs --format es ```
+ ``` 
+ npx peggy .\fileName.pegjs --format es 
+ ```
 # Config 
 Crear archivo config.js
 ``` 
