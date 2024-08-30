@@ -1,4 +1,12 @@
-
+{ 
+  const createNode = (type,props) => { 
+    const tipos { 
+      'num' : 'Numero', 
+      'agrupacion': 'agrupacion', 
+      '+' : '+', 
+    }
+  }
+}
 Expresion = Suma
 
 Suma

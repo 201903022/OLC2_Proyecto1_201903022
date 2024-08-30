@@ -18,20 +18,6 @@ function editor(id, language, lineNumbers = true, readOnly = false, styleActiveL
     });
 }
 
-/**
- * Tabla de Errores 
- */
-
-/**
- * Tabla de simbolos 
- */
-function getSymbolsTable() {
-    let info = '<tr><th>No.</th><th>ID</th><th>Tipo</th><th>Tipo de Dato</th><th>Entorno</th><th>Linea</th><th>Columna</th></tr>'
-    document.getElementById('symb-report').innerHTML = info
-
-
-}
-
 /** Abrir Archivo */
 const openFile = async (editor) => {
     console.log('click en open file ')
