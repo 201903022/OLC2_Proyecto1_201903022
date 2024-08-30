@@ -1,7 +1,9 @@
-let errorTable, symbolTable, Arm64Editor, consoleResult, dotStringCst = "";
+import {parse} from './src/Peggy/analizador.js'
+import {InterpreteVisitor} from './src/Controller/InterpreteVisitor.js'
+let errorTable, symbolTable, OakdEditor, consoleResult, dotStringCst = "";
 /*Scrips Code Mirror */
 $(document).ready(function () {
-    Arm64Editor = editor('editor');
+    OakdEditor = editor('editor');
     consoleResult = editor('console', 'text/x-rustsrc', true, true, false, true);
 });
 
@@ -17,6 +19,38 @@ function editor(id, language, lineNumbers = true, readOnly = false, styleActiveL
         mode: "text/x-rustsrc"
     });
 }
+
+/**
+ * Tabla de Errores 
+ */
+function getErrors(e) {
+
+
+}
+/**
+ * Tabla de simbolos 
+ */
+function getSymbolsTable() {
+
+}
+
+/**
+ * Tabla de Tokens 
+ */
+function getTokens() {
+
+
+
+}
+/**
+ * CST
+ * la Funcion recibe debe recibir un sring  con dot para 
+ * crear el cst
+ */
+function graphCST(DOTstring) {
+
+}
+
 
 /** Abrir Archivo */
 const openFile = async (editor) => {
@@ -43,7 +77,7 @@ const openFile = async (editor) => {
 
 /**Guardar achivo .s  */
 const saveFile = async (editor) => {
-    const text = Arm64Editor.getValue();
+    const text = OakdEditor.getValue();
     var archivoBlob = new Blob([text], { type: 'text/plain' });
     // Crear un enlace para descargar el archivo
     var enlaceDescarga = document.createElement("a");
@@ -51,7 +85,7 @@ const saveFile = async (editor) => {
 
     // Solicitar al usuario que ingrese un nombre de archivo
     var nombreArchivo = prompt("Por favor, ingresa el nombre del archivo:", "nombreArchivo");
-    nombreArchivo += ".s"
+    nombreArchivo += ".oa"
     if (nombreArchivo) {
         enlaceDescarga.download = nombreArchivo;
 
@@ -76,6 +110,25 @@ const cleanEditor = (editor) => {
 
 /* Analizador*/
 
+const analysis = async () => {
+    const text = OakdEditor.getValue();
+    try {
+        console.log('*******Code*******')
+        console.log(text)
+        const result = parse(text);
+        const Interpete = new InterpreteVisitor();
+        console.log('*******Result*******')
+        console.log({result})
+        result.forEach(re => re.accept(Interpete))
+        console.log('*******Interpete*******')
+        console.log(Interpete.outPut)
+        consoleResult.setValue(Interpete.outPut)
+
+    } catch (error) {
+        console.log('*******Error*******')
+        console.log(error)
+    }
+}
 
 const btnClean = document.getElementById('clearButton'),
     btnOpen = document.getElementById('btn__open'),
@@ -86,20 +139,12 @@ const btnClean = document.getElementById('clearButton'),
 
 
 
-btnOpen.addEventListener('click', () => openFile(Arm64Editor));
-btnClean.addEventListener('click', () => cleanEditor(Arm64Editor));
+btnOpen.addEventListener('click', () => openFile(OakdEditor));
+btnClean.addEventListener('click', () => cleanEditor(OakdEditor));
 btnAnalysis.addEventListener('click', () => analysis());
 btnSave.addEventListener('click', () => saveFile());
 btnT.addEventListener('click', () => graphVCST());
 
-/**contador para ejecucion */
 
-let contadorId;
 
-// Función para iniciar el contador
-// Función para iniciar el contador
-function iniciarContador() {
-    tiempoInicio = performance.now(); // Guardar el tiempo de inicio en milisegundos
-    console.log('Contador iniciado.');
-}
 

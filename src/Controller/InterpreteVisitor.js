@@ -1,6 +1,19 @@
 import {BaseVisitor} from '../abstract/visitor.js'
+import {Environment} from '../Environment/environment.js'
 
 export class InterpreteVisitor extends BaseVisitor {
+    
+    constructor() {
+        super();
+        this.environment = new Environment(undefined);
+        this.outPut = '';
+
+    }
+
+    interpret(nodo){ 
+        return nodo.accept(this);
+    }
+
    /**
     *  {BaseVisitor['visitExpresion']}
     */
@@ -12,7 +25,6 @@ export class InterpreteVisitor extends BaseVisitor {
  * @type{BaseVisitor['visitOperacionBinaria']}
  */
     visitOperacionBinaria(node) {
-        const left = node.izq.accept(this)
         throw new Error('Metodo visitOperacionBinaria no implementado');
     }
     
@@ -34,7 +46,9 @@ export class InterpreteVisitor extends BaseVisitor {
  * @type{BaseVisitor['visitNumero']}
  */
     visitNumero(node) {
-        throw new Error('Metodo visitNumero no implementado');
+        console.log('Visit Numero ')
+        console.log('Valor: ', node.valor)
+        return node.valor;
     }
     
 /**
@@ -54,8 +68,11 @@ export class InterpreteVisitor extends BaseVisitor {
 /**
  * @type{BaseVisitor['visitPrint']}
  */
-    visitPrint(node) {
-        throw new Error('Metodo visitPrint no implementado');
+    visitPrint(node) { 
+        console.log('Visit print')
+        const value = node.exp.accept(this); 
+        this.outPut += value + '\n';
+
     }
     
 /**
@@ -69,6 +86,10 @@ export class InterpreteVisitor extends BaseVisitor {
  * @type{BaseVisitor['visitAsignacion']}
  */
     visitAsignacion(node) {
+        console.log("asignacion ")
+        const varName = node.id; 
+        const value = node.exp.accept(this);
+        this.environment.assignVariable(varName,value); 
         throw new Error('Metodo visitAsignacion no implementado');
     }
     
