@@ -3,6 +3,7 @@
   const crearNodo = (tipoNodo, props) =>{
     const tipos = {
       'numero': nodos.Numero,
+      'primitive': nodos.Primitive, 
       'agrupacion': nodos.Agrupacion,
       'binaria': nodos.OperacionBinaria,
       'unaria': nodos.OperacionUnaria,
@@ -86,7 +87,9 @@ Unaria = "-" _ num:Numero { return crearNodo('unaria', { op: '-', exp: num }) }
 / Numero
 
 // { return{ tipo: "numero", valor: parseFloat(text(), 10) } }
-Numero = [0-9]+( "." [0-9]+ )? {return crearNodo('numero', { valor: parseFloat(text(), 10) })}
+Numero = [0-9]+( "." [0-9]+ )+ {return crearNodo('primitive', { typeD:'float', value:parseFloat(text(),0)  }) }
+  / [0-9]+ {return crearNodo('primitive', { typeD:'int', value:parseInt(text(),0)  }) }
+  / '"' [^\"]* '"' {return crearNodo('primitive', { typeD:'string', value:text().slice(1,-1) }) }
   / "(" _ exp:Expresion _ ")" { return crearNodo('agrupacion', { exp }) }
   / id:Identificador { return crearNodo('referenciaVariable', { id }) }
 

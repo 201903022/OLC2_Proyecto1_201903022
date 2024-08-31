@@ -4,6 +4,9 @@
  * @typedef {import('./nodos').Expresion} Expresion
 
 
+ * @typedef {import('./nodos').Primitive} Primitive
+
+
  * @typedef {import('./nodos').OperacionBinaria} OperacionBinaria
 
 
@@ -55,6 +58,15 @@ export class BaseVisitor {
      */
     visitExpresion(node) {
         throw new Error('Metodo visitExpresion no implementado');
+    }
+    
+
+    /**
+     * @param {Primitive} node
+     * @returns {any}
+     */
+    visitPrimitive(node) {
+        throw new Error('Metodo visitPrimitive no implementado');
     }
     
 

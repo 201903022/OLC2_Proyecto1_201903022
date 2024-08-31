@@ -41,6 +41,39 @@ export class Expresion  {
     }
 }
     
+export class Primitive extends Expresion {
+
+    /**
+    * @param {Object} options
+    * @param {string} options.typeD tipo de dato string,int...
+ * @param {any} options.value valor del primitivo
+    */
+    constructor({ typeD, value }) {
+        super();
+        
+        /**
+         * tipo de dato string,int...
+         * @type {string}
+        */
+        this.typeD = typeD;
+
+
+        /**
+         * valor del primitivo
+         * @type {any}
+        */
+        this.value = value;
+
+    }
+
+    /**
+     * @param {BaseVisitor} visitor
+     */
+    accept(visitor) {
+        return visitor.visitPrimitive(this);
+    }
+}
+    
 export class OperacionBinaria extends Expresion {
 
     /**
@@ -405,4 +438,4 @@ export class While extends Expresion {
     }
 }
     
-export default { Expresion, OperacionBinaria, OperacionUnaria, Agrupacion, Numero, DeclaracionVariable, ReferenciaVariable, Print, ExpresionStmt, Asignacion, Bloque, If, While }
+export default { Expresion, Primitive, OperacionBinaria, OperacionUnaria, Agrupacion, Numero, DeclaracionVariable, ReferenciaVariable, Print, ExpresionStmt, Asignacion, Bloque, If, While }

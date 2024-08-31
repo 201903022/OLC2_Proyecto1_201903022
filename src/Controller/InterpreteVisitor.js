@@ -14,25 +14,94 @@ export class InterpreteVisitor extends BaseVisitor {
         return nodo.accept(this);
     }
 
+
    /**
-    *  {BaseVisitor['visitExpresion']}
+    *  @type{BaseVisitor['visitExpresion']}
     */
     visitExpresion(node) {
         throw new Error('Metodo visitExpresion no implementado');
+    }
+
+    /**
+     * @type{BaseVisitor['visitPrimitive']}
+     */
+
+    visitPrimitive(node) {
+        console.log('visitPrimitive')
+        switch (node.typeD) {
+            case 'int':
+                console.log('int')
+                node.value = parseInt(node.value); 
+                return node;    
+            case 'float':
+                console.log('float')
+                node.value = parseFloat(node.value);
+                return node
+            case 'string':
+                let cadena = node.value;
+                cadena = cadena.replace(/\\'/g, "'").replace(/\\"/g, '"').replace(/\\n/g, '\n').replace(/\\t/g, '\t').replace(/\\/g, '\\');
+                console.log('Cadenaaaaa ',cadena)
+                node.value = cadena;
+                console.log('string')
+                return node;                        
+            default:
+                throw new Error(`Type primitive is no supported ${typePrimitive}`);
+        }
+        
     }
     
 /**
  * @type{BaseVisitor['visitOperacionBinaria']}
  */
     visitOperacionBinaria(node) {
-        throw new Error('Metodo visitOperacionBinaria no implementado');
+        console.log('**************************')
+        console.log('Operacion Binaria')
+        console.log('Node ', node )
+        console.log('node.der: ',node.izq)
+        console.log('node.izq: ',node.der)
+        console.log('node.der.value: ', node.der.value)
+        console.log('node.izq.value: ', node.izq.value)
+        //tipo
+        console.log('node.der.typed: ', node.der.typeD);
+        console.log('node.izq.typed: ', node.izq.typeD);
+        const left = node.izq.accept(this); 
+        const right = node.der.accept(this); 
+        console.log('left : ', left)
+        console.log('right : ', right)
+
+        switch (node.op) {
+            case '+':
+                console.log('left.value: ', left.value)
+                console.log('right.value: ', right.value)
+                console.log('nodeeeee ',node)
+                let suma = left.value + right.value; 
+                const nodecito = {tipo:'int', value:suma,location:node.location}
+                console.log('nodecito: ', nodecito)
+                return nodecito;    
+            case '-':
+                return left - right;
+            case '*':
+                return left * right;
+            case '/':
+                return left / right;                        
+            default:
+                throw new Error(`Operator is no supported ${node.op}`);
+        }
     }
     
 /**
  * @type{BaseVisitor['visitOperacionUnaria']}
  */
     visitOperacionUnaria(node) {
-        throw new Error('Metodo visitOperacionUnaria no implementado');
+        console.log('Operacion Unaria')
+        const exp = node.exp.accept(this); 
+        switch (node.op) {
+            case '-':
+                return -exp;    
+            default:
+                throw new Error(`Operator is no supported ${node.op}`);
+        }
+
     }
     
 /**
@@ -69,9 +138,15 @@ export class InterpreteVisitor extends BaseVisitor {
  * @type{BaseVisitor['visitPrint']}
  */
     visitPrint(node) { 
+        console.log('**********PRINT***********')
         console.log('Visit print')
+        console.log('Valor: aaaaaaaa', node) 
+        console.log('value node.exp: ',node.exp.value)
+        console.log('Valor: ', node.exp.accept(this))
+
         const value = node.exp.accept(this); 
-        this.outPut += value + '\n';
+        console.log('Valor Valueee: ', value)
+        this.outPut += value.value+ '\n';
 
     }
     

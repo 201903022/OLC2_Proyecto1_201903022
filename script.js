@@ -1,5 +1,5 @@
-import {parse} from './src/Peggy/analizador.js'
 import {InterpreteVisitor} from './src/Controller/InterpreteVisitor.js'
+import {parse} from './src/Peggy/analizador.js'
 let errorTable, symbolTable, OakdEditor, consoleResult, dotStringCst = "";
 /*Scrips Code Mirror */
 $(document).ready(function () {
