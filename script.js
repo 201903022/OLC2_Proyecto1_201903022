@@ -125,7 +125,20 @@ const analysis = async () => {
         consoleResult.setValue(Interpete.outPut)
 
     } catch (error) {
+        let outputError = ''; 
         console.log('*******Error*******')
+        console.log(JSON.stringify(error,null,2))    
+        outputError += `Error: ${error.message}`
+        console.log(`Error: ${error.expected}`)
+        if (error.location && error.location.start) {
+            const { line, column } = error.location.start;
+            outputError += `Error en la linea ${line} y columna ${column}.\n`
+            console.log(`Error en Linea: ${line}, Columna: ${column}`);
+        } else {
+            console.log('No se encontraron detalles de ubicación en el error.');
+        }
+        //add to console
+        consoleResult.setValue(outputError)
         console.log(error)
     }
 }

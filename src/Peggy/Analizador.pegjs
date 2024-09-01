@@ -94,4 +94,7 @@ Numero = [0-9]+( "." [0-9]+ )+ {return crearNodo('primitive', { typeD:'float', v
   / id:Identificador { return crearNodo('referenciaVariable', { id }) }
 
 
-_ = [ \t\n\r]*
+_ = ([ \t\n\r] / Comments)*
+
+Comments = "//" (![\n] .)*
+            / "/*" (!("*/") .)* "*/"

@@ -1,5 +1,6 @@
 import {BaseVisitor} from '../abstract/visitor.js'
 import {Environment} from '../Environment/environment.js'
+import {Dato} from '../Clases/Dato.js'
 
 export class InterpreteVisitor extends BaseVisitor {
     
@@ -28,14 +29,21 @@ export class InterpreteVisitor extends BaseVisitor {
 
     visitPrimitive(node) {
         console.log('visitPrimitive')
+        let dato; 
         switch (node.typeD) {
             case 'int':
                 console.log('int')
+                //dato
+                dato = new Dato(node.typeD, parseInt(node.value), node.location); 
+                console.log("Datoooo: ")
+                console.log(dato)
                 node.value = parseInt(node.value); 
                 return node;    
             case 'float':
                 console.log('float')
+                
                 node.value = parseFloat(node.value);
+                dato = new Dato(node.typeD,node.value,node.location);
                 return node
             case 'string':
                 let cadena = node.value;
@@ -75,8 +83,11 @@ export class InterpreteVisitor extends BaseVisitor {
                 console.log('right.value: ', right.value)
                 console.log('nodeeeee ',node)
                 let suma = left.value + right.value; 
-                const nodecito = {tipo:'int', value:suma,location:node.location}
+                const nodecito = {tipo:'int', value:suma, location:node.location}
+                let node1 =  new Dato ('int', suma, node.location);
+                console.log('nodito: ', node1)
                 console.log('nodecito: ', nodecito)
+                //return new Dato ()
                 return nodecito;    
             case '-':
                 return left - right;
