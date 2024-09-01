@@ -28,7 +28,7 @@ programa = _ dcl:Declaracion* _ { return dcl }
 Declaracion = dcl:VarDcl _ { return dcl }
             / stmt:Stmt _ { return stmt }
 
-VarDcl = "var" _ id:Identificador _ "=" _ exp:Expresion _ ";" { return crearNodo('declaracionVariable', { id, exp }) }
+VarDcl = "int" _ id:Identificador _ "=" _ exp:Expresion _ ";" { return crearNodo('declaracionVariable', { id:id, exp:exp,typeD:"int" }) }
 
 Stmt = "print(" _ exp:Expresion _ ")" _ ";" { return crearNodo('print', { exp }) }
     / exp:Expresion _ ";" { return crearNodo('expresionStmt', { exp }) }

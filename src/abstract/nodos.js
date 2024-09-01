@@ -203,9 +203,10 @@ export class DeclaracionVariable extends Expresion {
     /**
     * @param {Object} options
     * @param {string} options.id Identificador de la variable
- * @param {Expresion} options.exp Expresion de la variable
+    * @param {Expresion} options.exp Expresion de la variable
+    * @param {string} options.typeD tipo de dato string,int...
     */
-    constructor({ id, exp }) {
+    constructor({ id, exp, typeD }) {
         super();
         
         /**
@@ -220,6 +221,13 @@ export class DeclaracionVariable extends Expresion {
          * @type {Expresion}
         */
         this.exp = exp;
+
+
+        /**
+         * tipo de dato string,int...
+         * @type {string}
+        */
+        this.typeD = typeD;
 
     }
 
