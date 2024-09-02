@@ -8,7 +8,7 @@ export class InterpreteVisitor extends BaseVisitor {
         super();
         this.environment = new Environment(undefined);
         this.outPut = '';
-
+        this.prevContinue = null;
     }
 
     interpret(nodo){ 
@@ -394,14 +394,43 @@ export class InterpreteVisitor extends BaseVisitor {
  * @type{BaseVisitor['visitIf']}
  */
     visitIf(node) {
-        throw new Error('Metodo visitIf no implementado');
+        try {
+            const cond = node.cond.accept(this); 
+    
+            if (cond.value) {
+                node.stmtTrue.accept(this);
+                return
+            }
+    
+            if (node.stmtFalse) {
+                node.stmtFalse.accept(this);
+            }
+            
+        } catch (error) {            
+            throw new Error('Metodo visitIf no implementado');
+        }
+
+
     }
     
 /**
  * @type{BaseVisitor['visitWhile']}
  */
-    visitWhile(node) {
-        throw new Error('Metodo visitWhile no implementado');
+    visitWhile(node) {        
+        const startingEnv = this.environment;
+        try {
+
+            while (node.cond.accept(this).value) {
+                node.stmt.accept(this);
+               // this.environment = new Environment(startingEnv);
+            }
+            
+        } catch (error) {  
+            this.environment = startingEnv;
+            
+            
+        }
+
     }
     
 /**

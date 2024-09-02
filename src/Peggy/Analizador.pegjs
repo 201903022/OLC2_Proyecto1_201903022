@@ -40,14 +40,14 @@ TypesValues = "int" { return "int"}
 
 Stmt = "print(" _ exp:Expresion _ ")" _ ";" { return crearNodo('print', { exp }) }
     / exp:Expresion _ ";" { return crearNodo('expresionStmt', { exp }) }
-    / "{" _ dcls:Declaracion* _ "}" { return crearNodo('bloque', { dcls }) }
+    / bl:Bloque {return bl}
     / "if" _ "(" _ cond:Expresion _ ")" _ stmtTrue:Stmt 
       stmtFalse:(
         _ "else" _ stmtFalse:Stmt { return stmtFalse } 
       )? { return crearNodo('if', { cond, stmtTrue, stmtFalse }) }
     / "while" _ "(" _ cond:Expresion _ ")" _ stmt:Stmt { return crearNodo('while', { cond, stmt }) }
 
-
+Bloque = "{" _ dcls:Declaracion* _ "}" { return crearNodo('bloque', { dcls }) }
 
 
 Identificador = [a-zA-Z][a-zA-Z0-9]* { return text() }
