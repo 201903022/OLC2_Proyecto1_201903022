@@ -28,7 +28,13 @@ programa = _ dcl:Declaracion* _ { return dcl }
 Declaracion = dcl:VarDcl _ { return dcl }
             / stmt:Stmt _ { return stmt }
 
-VarDcl = "int" _ id:Identificador _ "=" _ exp:Expresion _ ";" { return crearNodo('declaracionVariable', { id:id, exp:exp,typeD:"int" }) }
+VarDcl = tipo:TypesValues _ id:Identificador _ "=" _ exp:Expresion _ ";" { return crearNodo('declaracionVariable', { id:id, exp:exp,typeD:tipo }) }
+
+TypesValues = "int" { return "int"}
+          /"float"{  return "float"}
+          /"string" {return "string"}
+          /"char" {  return "char"}
+          /"bool"{ return "bool"}
 
 Stmt = "print(" _ exp:Expresion _ ")" _ ";" { return crearNodo('print', { exp }) }
     / exp:Expresion _ ";" { return crearNodo('expresionStmt', { exp }) }
@@ -87,8 +93,8 @@ Unaria = "-" _ num:Numero { return crearNodo('unaria', { op: '-', exp: num }) }
 / Numero
 
 // { return{ tipo: "numero", valor: parseFloat(text(), 10) } }
-Numero = [0-9]+( "." [0-9]+ )+ {return crearNodo('primitive', { typeD:'float', value:parseFloat(text(),0)  }) }
-  / [0-9]+ {return crearNodo('primitive', { typeD:'int', value:parseInt(text(),0)  }) }
+Numero = [0-9]+( "." [0-9]+ )+ {return crearNodo('primitive', { typeD:'float', value:Number(text(),0)  }) }
+  / [0-9]+ {return crearNodo('primitive', { typeD:'int', value:Number(text(),0)  }) }
   / '"' [^\"]* '"' {return crearNodo('primitive', { typeD:'string', value:text().slice(1,-1) }) }
   / "(" _ exp:Expresion _ ")" { return crearNodo('agrupacion', { exp }) }
   / id:Identificador { return crearNodo('referenciaVariable', { id }) }

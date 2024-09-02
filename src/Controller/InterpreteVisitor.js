@@ -1,7 +1,7 @@
 import {BaseVisitor} from '../abstract/visitor.js'
 import {Environment} from '../Environment/environment.js'
 import {Dato} from '../Clases/Dato.js'
-
+import {roundToDecimal} from '../utils/util.js'
 export class InterpreteVisitor extends BaseVisitor {
     
     constructor() {
@@ -37,11 +37,13 @@ export class InterpreteVisitor extends BaseVisitor {
                 dato = new Dato(node.typeD, parseInt(node.value), node.location); 
                 console.log("Datoooo: ")
                 console.log(dato)
-                node.value = parseInt(node.value); 
+                node.value = Number(node.value); 
                 return (new Dato(node.typeD,node.value,node.location));    
             case 'float':
                 console.log('float')                
-                node.value = parseFloat(node.value);
+                node.value = Number(node.value);
+                node.value = roundToDecimal(node.value,4)
+                console.log('node.value: ', node.value)
                 return (new Dato(node.typeD,node.value,node.location))
             case 'string':
                 let cadena = node.value;
@@ -85,18 +87,18 @@ export class InterpreteVisitor extends BaseVisitor {
                 }else if (left.type === 'int' && right.type === 'float') {
                     let typeD = 'float';
                     let suma = left.value + right.value; 
-                    suma = parseFloat(suma)
+                    //suma = parseFloat(suma)
                     return (new Dato(typeD,suma,node.location));
                                     
                 }else if (left.type === 'float' && right.type === 'float') {
                     let typeD = 'float';
                     let suma = left.value + right.value; 
-                    suma = parseFloat(suma)
+                   //// suma = parseFloat(suma)
                     return (new Dato(typeD,suma,node.location));                    
                 }else if (left.type === 'float' && right.type === 'int') {
                     let typeD = 'float';
                     let suma = left.value + right.value; 
-                    suma = parseFloat(suma)
+                   // suma = parseFloat(suma)
                     return (new Dato(typeD,suma,node.location));                    
                 }else{ 
                     throw new Error(`Operator is no supported ${node.op} cant add ${left.type} + ${right.type}`);
@@ -113,7 +115,7 @@ export class InterpreteVisitor extends BaseVisitor {
                     }else if (left.type === 'int' && right.type === 'float') {
                         let typeD = 'float';
                         let suma = left.value - right.value; 
-                        suma = parseFloat(suma);
+                       // suma = parseFloat(suma);
                         return (new Dato(typeD,suma,node.location));
                                         
                     }else if (left.type === 'float' && right.type === 'float') {
@@ -123,7 +125,7 @@ export class InterpreteVisitor extends BaseVisitor {
                     }else if (left.type === 'float' && right.type === 'int') {
                         let typeD = 'float';
                         let suma = left.value - right.value; 
-                        suma = parseFloat(suma)
+                       // suma = parseFloat(suma)
                         return (new Dato(typeD,suma,node.location));                    
                     }else{ 
                         throw new Error(`Operator is no supported ${node.op} cant add ${left.type} + ${right.type}`);
@@ -262,10 +264,20 @@ export class InterpreteVisitor extends BaseVisitor {
        /// console.log('Valor: aaaaaaaa', node) 
       //  console.log('value node.exp: ',node.exp.value)
        // console.log('Valor: ', node.exp.accept(this))
-
-        const value = node.exp.accept(this); 
-        console.log('Valor Valueee: ', value)
-        this.outPut += value.value+ '\n';
+       const value = node.exp.accept(this); 
+       console.log('Valor Valueee: ', value)
+       if (value.type) {
+           console.log('tiene tipooo ')
+           console.log(value.type)
+           if (value.type === 'float') {
+                let a = value.value.toFixed(4);
+                this.outPut += a + '\n';
+           }else{ 
+               this.outPut += value.value+ '\n';
+           }
+        }else{ 
+            //no se xdd
+       }
 
     }
     
