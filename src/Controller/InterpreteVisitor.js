@@ -52,6 +52,14 @@ export class InterpreteVisitor extends BaseVisitor {
                 node.value = cadena;
                 console.log('string')
                 return (new Dato(node.typeD,node.value,node.location))
+            case 'bool': 
+                console.log('bool')
+                node.value = (node.value === 'true') ? true : false;
+                return (new Dato(node.typeD,node.value,node.location))
+            case 'char': 
+                console.log('char')
+                node.value = node.value.replace(/'/g, '');
+                return (new Dato(node.typeD,node.value,node.location))                
             default:
                 throw new Error(`Type primitive is no supported ${typePrimitive}`);
         }
@@ -130,7 +138,7 @@ export class InterpreteVisitor extends BaseVisitor {
                     }else{ 
                         throw new Error(`Operator is no supported ${node.op} cant add ${left.type} + ${right.type}`);
                     }                
-                    case '*':
+                case '*':
                         if (left.type === 'string' || right.type === 'string') {
                             throw new Error(`Operator is no supported ${node.op} cant substract using string`)                        
                         } else if(left.type === 'int' && right.type === 'int') {
@@ -152,7 +160,7 @@ export class InterpreteVisitor extends BaseVisitor {
                         }else{ 
                             throw new Error(`Operator is no supported ${node.op} cant add ${left.type} + ${right.type}`);
                         }                                                                
-                        case '/':
+                case '/':
                             if (left.type === 'string' || right.type === 'string') {
                                 throw new Error(`Operator is no supported ${node.op} cant substract using string`)                        
                             }  
@@ -183,7 +191,17 @@ export class InterpreteVisitor extends BaseVisitor {
                                 throw new Error(`Operator is no supported ${node.op}`);
                             }
     }
+
+    /**
+     * @param {BaseVisitor['visitOpLogica']} 
+     */
     
+    visitOpLogica(node){ 
+            console.log('visitOplogica')
+            console.log('node: ',node)
+
+    }
+
 /**
  * @type{BaseVisitor['visitOperacionUnaria']}
  */
@@ -247,6 +265,7 @@ export class InterpreteVisitor extends BaseVisitor {
  * @type{BaseVisitor['visitReferenciaVariable']}
  */
     visitReferenciaVariable(node) {
+        console.log('Referencia de variableeeeee: ', node)
         const varName = node.id;
         const value = this.environment.getVariable(varName);
         if (!value) {
@@ -308,7 +327,19 @@ export class InterpreteVisitor extends BaseVisitor {
  * @type{BaseVisitor['visitBloque']}
  */
     visitBloque(node) {
-        throw new Error('Metodo visitBloque no implementado');
+
+        try {
+            const pastEnv = this.environment; 
+            this.environment = new Environment(pastEnv);
+            node.dcls.forEach(dcl => dcl.accept(this)); 
+    
+            this.environment = pastEnv;
+            
+        } catch (error) {
+            
+            throw new Error('Metodo visitBloque no implementado');
+        }
+
     }
     
 /**

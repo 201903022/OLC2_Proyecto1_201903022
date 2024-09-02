@@ -10,6 +10,9 @@
  * @typedef {import('./nodos').OperacionBinaria} OperacionBinaria
 
 
+ * @typedef {import('./nodos').OpLogica} OpLogica
+
+
  * @typedef {import('./nodos').OperacionUnaria} OperacionUnaria
 
 
@@ -76,6 +79,15 @@ export class BaseVisitor {
      */
     visitOperacionBinaria(node) {
         throw new Error('Metodo visitOperacionBinaria no implementado');
+    }
+    
+
+    /**
+     * @param {OpLogica} node
+     * @returns {any}
+     */
+    visitOpLogica(node) {
+        throw new Error('Metodo visitOpLogica no implementado');
     }
     
 

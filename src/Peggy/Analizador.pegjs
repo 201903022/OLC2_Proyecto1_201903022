@@ -44,14 +44,49 @@ Stmt = "print(" _ exp:Expresion _ ")" _ ";" { return crearNodo('print', { exp })
         _ "else" _ stmtFalse:Stmt { return stmtFalse } 
       )? { return crearNodo('if', { cond, stmtTrue, stmtFalse }) }
     / "while" _ "(" _ cond:Expresion _ ")" _ stmt:Stmt { return crearNodo('while', { cond, stmt }) }
+Booleanas = "true"  {return crearNodo('primitive', { typeD:'bool', value:'true'  }) }
+          / "false"  {return crearNodo('primitive', { typeD:'bool', value:'false'  }) }
+
+
 
 Identificador = [a-zA-Z][a-zA-Z0-9]* { return text() }
 
 Expresion = Asignacion
 
 Asignacion = id:Identificador _ "=" _ asgn:Asignacion { return crearNodo('asignacion', { id, asgn }) }
-          / Comparacion
+          / Equality
 
+//logical: "&&" "||"
+ //w
+
+//Term: "+" "-"
+//Factor: "*" "/"
+//unary: "!" "-" 
+//equality: "==" "!=" 
+Equality = izq:Relational expansion:( 
+  _ op:("==" / "!=") _ der:Relational { return { tipo: op, der } }
+)* { 
+  return expansion.reduce(
+    (operacionAnterior, operacionActual) => {
+      const { tipo, der } = operacionActual
+      return crearNodo('binaria', { op:tipo, izq: operacionAnterior, der })
+    },
+    izq
+  )
+}
+//relational: "<" "<=" ">" ">="
+Relational = izq:Suma expansion:( 
+  _ op:("<" / "<=" / ">" / ">=") _ der:Suma { return { tipo: op, der } }
+)* { 
+  return expansion.reduce(
+    (operacionAnterior, operacionActual) => {
+      const { tipo, der } = operacionActual
+      return crearNodo('binaria', { op:tipo, izq: operacionAnterior, der })
+    },
+    izq
+  )}
+
+/*
 Comparacion = izq:Suma expansion:(
   _ op:("<=") _ der:Suma { return { tipo: op, der } }
 )* { 
@@ -64,7 +99,7 @@ Comparacion = izq:Suma expansion:(
   )
 }
 
-
+*/
 Suma = izq:Multiplicacion expansion:(
   _ op:("+" / "-") _ der:Multiplicacion { return { tipo: op, der } }
 )* { 
@@ -96,9 +131,12 @@ Unaria = "-" _ num:Numero { return crearNodo('unaria', { op: '-', exp: num }) }
 Numero = [0-9]+( "." [0-9]+ )+ {return crearNodo('primitive', { typeD:'float', value:Number(text(),0)  }) }
   / [0-9]+ {return crearNodo('primitive', { typeD:'int', value:Number(text(),0)  }) }
   / '"' [^\"]* '"' {return crearNodo('primitive', { typeD:'string', value:text().slice(1,-1) }) }
+  //  "'" [^\"]* "'" {return crearNodo('primitive', { typeD:'char', value:text().slice(1,-1) }) }
   / "(" _ exp:Expresion _ ")" { return crearNodo('agrupacion', { exp }) }
   / id:Identificador { return crearNodo('referenciaVariable', { id }) }
-
+  / boolito:Booleanas _ { return boolito }
+  / "true"   {return crearNodo('primitive', { typeD:'bool', value:'true'  }) }
+  / "false" {return crearNodo('primitive', { typeD:'bool', value:'false'  }) }
 
 _ = ([ \t\n\r] / Comments)*
 

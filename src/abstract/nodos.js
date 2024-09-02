@@ -115,6 +115,47 @@ export class OperacionBinaria extends Expresion {
     }
 }
     
+export class OpLogica extends Expresion {
+
+    /**
+    * @param {Object} options
+    * @param {Expresion} options.izq Expresion izquierda de la operacion
+ * @param {Expresion} options.der Expresion derecha de la operacion
+ * @param {string} options.op Operador de la operacion
+    */
+    constructor({ izq, der, op }) {
+        super();
+        
+        /**
+         * Expresion izquierda de la operacion
+         * @type {Expresion}
+        */
+        this.izq = izq;
+
+
+        /**
+         * Expresion derecha de la operacion
+         * @type {Expresion}
+        */
+        this.der = der;
+
+
+        /**
+         * Operador de la operacion
+         * @type {string}
+        */
+        this.op = op;
+
+    }
+
+    /**
+     * @param {BaseVisitor} visitor
+     */
+    accept(visitor) {
+        return visitor.visitOpLogica(this);
+    }
+}
+    
 export class OperacionUnaria extends Expresion {
 
     /**
@@ -203,8 +244,8 @@ export class DeclaracionVariable extends Expresion {
     /**
     * @param {Object} options
     * @param {string} options.id Identificador de la variable
-    * @param {Expresion} options.exp Expresion de la variable
-    * @param {string} options.typeD tipo de dato string,int...
+ * @param {Expresion} options.exp Expresion de la variable
+ * @param {string} options.typeD tipo de dato string,int...
     */
     constructor({ id, exp, typeD }) {
         super();
@@ -446,4 +487,4 @@ export class While extends Expresion {
     }
 }
     
-export default { Expresion, Primitive, OperacionBinaria, OperacionUnaria, Agrupacion, Numero, DeclaracionVariable, ReferenciaVariable, Print, ExpresionStmt, Asignacion, Bloque, If, While }
+export default { Expresion, Primitive, OperacionBinaria, OpLogica, OperacionUnaria, Agrupacion, Numero, DeclaracionVariable, ReferenciaVariable, Print, ExpresionStmt, Asignacion, Bloque, If, While }
