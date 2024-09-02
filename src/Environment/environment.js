@@ -62,12 +62,30 @@ export class Environment{
         const cuurrentValue = this.variables[name]; 
         console.log('CurrentValue: ', cuurrentValue)
         if (cuurrentValue === undefined) {
+            //var accepts any type
+            
+            if (typeD === 'var') {
+                if (value) {
+                    let datoToSave  = new Dato(value.type,value.value,value.location)
+                    this.variables[name] = datoToSave;
+                    return;
+                }
+            }          
+            //float accepts int  
+            if (typeD === 'float' && value.type ==='int') {
+                let datoToSave = new Dato(typeD,value.value,value.location)
+                console.log('float accepts ints ')
+                this.variables[name] = datoToSave;
+                console.log(this.variables)
+                return;
+            }
+            
             //check types 
             if (typeD === value.type) {
                 let datoToSave = new Dato(typeD,value.value,value.location)
+                console.log('curren env: ')
                 console.log('Both are the same type ')
                 this.variables[name] = datoToSave;
-                console.log('variable added :V')
                 console.log(this.variables)
                 return;                
             }
@@ -79,6 +97,7 @@ export class Environment{
         }
 
         if (cuurrentValue === undefined && this.before) { 
+            console.log('aaaa cuurrentValue === undefined && this.before')
             this.before.assignVariable(name,value);            
             return;
         }

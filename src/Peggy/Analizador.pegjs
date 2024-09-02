@@ -6,6 +6,7 @@
       'primitive': nodos.Primitive, 
       'agrupacion': nodos.Agrupacion,
       'binaria': nodos.OperacionBinaria,
+      'logica': nodos.OpLogica,
       'unaria': nodos.OperacionUnaria,
       'declaracionVariable': nodos.DeclaracionVariable,
       'referenciaVariable': nodos.ReferenciaVariable,
@@ -35,6 +36,7 @@ TypesValues = "int" { return "int"}
           /"string" {return "string"}
           /"char" {  return "char"}
           /"bool"{ return "bool"}
+          /"var" {return "var"}
 
 Stmt = "print(" _ exp:Expresion _ ")" _ ";" { return crearNodo('print', { exp }) }
     / exp:Expresion _ ";" { return crearNodo('expresionStmt', { exp }) }
@@ -44,8 +46,7 @@ Stmt = "print(" _ exp:Expresion _ ")" _ ";" { return crearNodo('print', { exp })
         _ "else" _ stmtFalse:Stmt { return stmtFalse } 
       )? { return crearNodo('if', { cond, stmtTrue, stmtFalse }) }
     / "while" _ "(" _ cond:Expresion _ ")" _ stmt:Stmt { return crearNodo('while', { cond, stmt }) }
-Booleanas = "true"  {return crearNodo('primitive', { typeD:'bool', value:'true'  }) }
-          / "false"  {return crearNodo('primitive', { typeD:'bool', value:'false'  }) }
+
 
 
 
@@ -56,6 +57,7 @@ Expresion = Asignacion
 Asignacion = id:Identificador _ "=" _ asgn:Asignacion { return crearNodo('asignacion', { id, asgn }) }
           / Equality
 
+// asignTypes = "+=" "-=" "="
 //logical: "&&" "||"
  //w
 
@@ -69,19 +71,19 @@ Equality = izq:Relational expansion:(
   return expansion.reduce(
     (operacionAnterior, operacionActual) => {
       const { tipo, der } = operacionActual
-      return crearNodo('binaria', { op:tipo, izq: operacionAnterior, der })
+      return crearNodo('logica', { op:tipo, izq: operacionAnterior, der })
     },
     izq
   )
 }
 //relational: "<" "<=" ">" ">="
 Relational = izq:Suma expansion:( 
-  _ op:("<" / "<=" / ">" / ">=") _ der:Suma { return { tipo: op, der } }
+  _ op:(">=" / "<=" / ">" / "<") _ der:Suma { return { tipo: op, der } }
 )* { 
   return expansion.reduce(
     (operacionAnterior, operacionActual) => {
       const { tipo, der } = operacionActual
-      return crearNodo('binaria', { op:tipo, izq: operacionAnterior, der })
+      return crearNodo('logica', { op:tipo, izq: operacionAnterior, der })
     },
     izq
   )}
@@ -133,10 +135,9 @@ Numero = [0-9]+( "." [0-9]+ )+ {return crearNodo('primitive', { typeD:'float', v
   / '"' [^\"]* '"' {return crearNodo('primitive', { typeD:'string', value:text().slice(1,-1) }) }
   //  "'" [^\"]* "'" {return crearNodo('primitive', { typeD:'char', value:text().slice(1,-1) }) }
   / "(" _ exp:Expresion _ ")" { return crearNodo('agrupacion', { exp }) }
-  / id:Identificador { return crearNodo('referenciaVariable', { id }) }
-  / boolito:Booleanas _ { return boolito }
   / "true"   {return crearNodo('primitive', { typeD:'bool', value:'true'  }) }
   / "false" {return crearNodo('primitive', { typeD:'bool', value:'false'  }) }
+  / id:Identificador { return crearNodo('referenciaVariable', { id }) }
 
 _ = ([ \t\n\r] / Comments)*
 

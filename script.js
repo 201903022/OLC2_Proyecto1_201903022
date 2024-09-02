@@ -130,6 +130,10 @@ const analysis = async () => {
         console.log(JSON.stringify(error,null,2))    
         outputError += `Error: ${error.message}`
         console.log(`Error: ${error.expected}`)
+        if (error.found){ 
+            outputError += `Se encontro: ${error.found} \n`
+            console.log(`Se encontro: ${error.found}`)
+        }
         if (error.location && error.location.start) {
             const { line, column } = error.location.start;
             outputError += `Error en la linea ${line} y columna ${column}.\n`

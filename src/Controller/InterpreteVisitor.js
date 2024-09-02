@@ -28,6 +28,7 @@ export class InterpreteVisitor extends BaseVisitor {
      */
 
     visitPrimitive(node) {
+        
         console.log('visitPrimitive')
         let dato; 
         switch (node.typeD) {
@@ -187,18 +188,65 @@ export class InterpreteVisitor extends BaseVisitor {
                             }else{ 
                                 throw new Error(`Operator is no supported ${node.op} cant add ${left.type} + ${right.type}`);
                             }
-                            default:
-                                throw new Error(`Operator is no supported ${node.op}`);
-                            }
+                default:
+                    throw new Error(`Operator is no supported ${node.op}`);
+                }
     }
 
     /**
-     * @param {BaseVisitor['visitOpLogica']} 
+     * @type{BaseVisitor['visitOpLogica']} 
      */
     
     visitOpLogica(node){ 
+
+            const left = node.izq.accept(this); 
+            const right = node.der.accept(this); 
+
             console.log('visitOplogica')
             console.log('node: ',node)
+            switch (node.op) {
+                case '==':
+                    console.log('==')
+                    if (left.value === right.value) {
+                        return new Dato('bool',true,node.location)
+                        
+                    } else {
+                        return new Dato('bool',false,node.location)                        
+                    }
+                case '!=':
+                    console.log('!=')
+                    if (left.value !== right.value) {
+                        return new Dato('bool',true,node.location)
+                    }
+                    return new Dato('bool',false,node.location)
+                case '>':
+                    console.log('>')
+                    if (left.value > right.value) {
+                        return new Dato('bool',true,node.location)
+                    }
+                    return new Dato('bool',false,node.location)
+                case '<':
+                    console.log('<')
+                    if (left.value < right.value) {
+                        return new Dato('bool',true,node.location)
+                    }
+                    return new Dato('bool',false,node.location)
+                case '>=':
+                    console.log('>=')
+                    if (left.value >= right.value) {
+                        return new Dato('bool',true,node.location)
+                    }
+                    return new Dato('bool',false,node.location)
+                case '<=':
+                    console.log('<=')
+                    if (left.value <= right.value) {
+                        return new Dato('bool',true,node.location)
+                    }
+                    return new Dato('bool',false,node.location)
+
+                default:
+                    throw new Error(`Operator is no supported ${node.op}`);
+            }
 
     }
 
