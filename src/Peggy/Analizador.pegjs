@@ -16,6 +16,7 @@
       'bloque': nodos.Bloque,
       'if': nodos.If,
       'while': nodos.While,
+      'for': nodos.For,      
       'break': nodos.Break,
       'continue': nodos.Continue,
       'return': nodos.Return
@@ -48,11 +49,21 @@ Stmt = "print(" _ exp:Expresion _ ")" _ ";" { return crearNodo('print', { exp })
         _ "else" _ stmtFalse:Stmt { return stmtFalse } 
       )? { return crearNodo('if', { cond, stmtTrue, stmtFalse }) }
     / "while" _ "(" _ cond:Expresion _ ")" _ stmt:Stmt { return crearNodo('while', { cond, stmt }) }
+    /"for" _ "(" _ init:FortBegining _  cond:Expresion _";" _ inc:Expresion ")" _ stmt:Stmt
+     {
+       return crearNodo('for', { init, cond, inc, stmt }) 
+    }
+    
     / "break" _ ";" {  console.log('breakPaa');
     return crearNodo('break', {}) }
     / "continue" _ ";" { return crearNodo('continue',{}) }
     / "return" _ exp:Expresion? _ ";" {return crearNodo('return',{ exp } ) }
     / exp:Expresion _ ";" { return crearNodo('expresionStmt', { exp }) }
+
+FortBegining = dcl:VarDcl {return dcl}
+            / exp:Expresion _ ";" {return exp}
+            /";" {return null }
+
 
 Bloque = "{" _ dcls:Declaracion* _ "}" { return crearNodo('bloque', { dcls }) }
 

@@ -2,6 +2,7 @@ import {BaseVisitor} from '../abstract/visitor.js'
 import {Environment} from '../Environment/environment.js'
 import {Dato} from '../Clases/Dato.js'
 import {BreaKException,ContinueException,ReturnException} from '../Clases/Transeferer.js'
+import nodos from '../abstract/nodos.js';
 
 export class InterpreteVisitor extends BaseVisitor {
     
@@ -34,32 +35,32 @@ export class InterpreteVisitor extends BaseVisitor {
         let dato; 
         switch (node.typeD) {
             case 'int':
-                console.log('int')
+               // console.log('int')
                 //dato
                 dato = new Dato(node.typeD, parseInt(node.value), node.location); 
-                console.log("Datoooo: ")
-                console.log(dato)
+              //  console.log("Datoooo: ")
+               // console.log(dato)
                 node.value = Number(node.value); 
                 return (new Dato(node.typeD,node.value,node.location));    
             case 'float':
-                console.log('float')                
+               // console.log('float')                
                 node.value = Number(node.value);
                 node.value = roundToDecimal(node.value,4)
-                console.log('node.value: ', node.value)
+               // console.log('node.value: ', node.value)
                 return (new Dato(node.typeD,node.value,node.location))
             case 'string':
                 let cadena = node.value;
                 cadena = cadena.replace(/\\'/g, "'").replace(/\\"/g, '"').replace(/\\n/g, '\n').replace(/\\t/g, '\t').replace(/\\/g, '\\');
-                console.log('Cadenaaaaa ',cadena)
+               // console.log('Cadenaaaaa ',cadena)
                 node.value = cadena;
-                console.log('string')
+               // console.log('string')
                 return (new Dato(node.typeD,node.value,node.location))
             case 'bool': 
-                console.log('bool')
+                //console.log('bool')
                 node.value = (node.value === 'true') ? true : false;
                 return (new Dato(node.typeD,node.value,node.location))
             case 'char': 
-                console.log('char')
+               // console.log('char')
                 node.value = node.value.replace(/'/g, '');
                 return (new Dato(node.typeD,node.value,node.location))                
             default:
@@ -79,9 +80,9 @@ export class InterpreteVisitor extends BaseVisitor {
         const right = node.der.accept(this); 
         switch (node.op) {
             case '+':
-                console.log('Tipos a Sumar: ')
-                console.log('left: ',left.type)
-                console.log('right: ',right.type) 
+              //  console.log('Tipos a Sumar: ')
+               // console.log('left: ',left.type)
+               // console.log('right: ',right.type) 
                 if (left.type === 'string' && right.type === 'string') {
                     let typeD = 'string';
                     let suma = left.value + right.value; 
@@ -203,8 +204,8 @@ export class InterpreteVisitor extends BaseVisitor {
             const left = node.izq.accept(this); 
             const right = node.der.accept(this); 
 
-            console.log('visitOplogica')
-            console.log('node: ',node)
+          //  console.log('visitOplogica')
+           // console.log('node: ',node)
             switch (node.op) {
                 case '==':
                     console.log('==')
@@ -241,6 +242,7 @@ export class InterpreteVisitor extends BaseVisitor {
                 case '<=':
                     console.log('<=')
                     if (left.value <= right.value) {
+                        console.log(left.value , ' <= ', right.value)
                         return new Dato('bool',true,node.location)
                     }
                     return new Dato('bool',false,node.location)
@@ -255,7 +257,7 @@ export class InterpreteVisitor extends BaseVisitor {
  * @type{BaseVisitor['visitOperacionUnaria']}
  */
     visitOperacionUnaria(node) {
-        console.log('Operacion Unaria')
+       // console.log('Operacion Unaria')
         const exp = node.exp.accept(this); 
         switch (node.op) {
             case '-':
@@ -293,16 +295,16 @@ export class InterpreteVisitor extends BaseVisitor {
  */
     visitDeclaracionVariable(node) {
         try {
-            console.log('Visit Declaracion Variable')
-            console.log('Id: ', node.id)
-            console.log('Exp: ', node.exp)
-            console.log('TypeD: ', node.typeD)  
+          //  console.log('Visit Declaracion Variable')
+         //   console.log('Id: ', node.id)
+         ///   console.log('Exp: ', node.exp)
+         //   console.log('TypeD: ', node.typeD)  
             const value = node.exp.accept(this);
-            console.log('Value: ', value.value)
-            console.log('Value Type: ', value.type)
+          //  console.log('Value: ', value.value)
+          //  console.log('Value Type: ', value.type)
             
             this.environment.assignVariable(node.id,value,node.typeD)
-            console.log('Variable is added to enviroment')
+           // console.log('Variable is added to enviroment')
         } catch (error) {
             console.log('Errooooooooor: ',error)
             throw new Error(`Error tryin to declarate a variable "${node.id}" ${error}`)
@@ -314,7 +316,7 @@ export class InterpreteVisitor extends BaseVisitor {
  * @type{BaseVisitor['visitReferenciaVariable']}
  */
     visitReferenciaVariable(node) {
-        console.log('Referencia de variableeeeee: ', node)
+      // console.log('Referencia de variableeeeee: ', node)
         const varName = node.id;
         const value = this.environment.getVariable(varName);
         if (!value) {
@@ -335,8 +337,8 @@ export class InterpreteVisitor extends BaseVisitor {
        const value = node.exp.accept(this); 
        console.log('Valor Valueee: ', value)
        if (value.type) {
-           console.log('tiene tipooo ')
-           console.log(value.type)
+          // console.log('tiene tipooo ')
+          // console.log(value.type)
            if (value.type === 'float') {
                 let a = value.value.toFixed(4);
                 this.outPut += a + '\n';
@@ -353,7 +355,7 @@ export class InterpreteVisitor extends BaseVisitor {
  * @type{BaseVisitor['visitExpresionStmt']}
  */
     visitExpresionStmt(node) {
-        console.log('Visit ExpresionStmt')
+       // console.log('Visit ExpresionStmt')
         node.exp.accept(this);
     }
     
@@ -427,7 +429,6 @@ export class InterpreteVisitor extends BaseVisitor {
 
             while (node.cond.accept(this).value) {
                 node.stmt.accept(this);
-                console.log('node: ',node.stmt.accept(this))
                // this.environment = new Environment(startingEnv);
             }
             
@@ -439,7 +440,7 @@ export class InterpreteVisitor extends BaseVisitor {
             }
             if (error instanceof ContinueException) {
                 console.log('Continuing')
-                return this.visitWhile(node) ;                            
+                return this.visitWhile(node);                            
             }            
         }
 
@@ -448,8 +449,33 @@ export class InterpreteVisitor extends BaseVisitor {
 /**
  * @type{BaseVisitor['visitFor']}
  */
-    visitFor(node) {        
-        throw new Error('Metodo visitFor no implementado');
+    visitFor(node) {    
+        try {
+            const incB = this.prevContinue; 
+            this.prevContinue = node.inc; 
+
+            const forT = new nodos.Bloque({ 
+                dcls: [ 
+                    node.init,
+                    new nodos.While({ 
+                        cond: node.cond,
+                        stmt: new nodos.Bloque({ 
+                            dcls: [ 
+                                node.stmt,
+                                node.inc
+                            ]
+                            })
+                    })
+                ]                
+            })
+            forT.accept(this);
+            this.prevContinue = incB;
+            
+        } catch (error) {
+            throw new Error (`for: ${error}`)
+            
+        }
+            
     }
     
 /**
@@ -463,8 +489,12 @@ export class InterpreteVisitor extends BaseVisitor {
 /**
  * @type{BaseVisitor['visitContinue']}
  */
-    visitContinue(node) {
+    visitContinue(node) {        
         console.log('Continueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee')
+        if (this.prevContinue) {
+            this.prevContinue.accept(this);            
+        }
+
         throw new ContinueException();
     }
     
