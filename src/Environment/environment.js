@@ -40,7 +40,7 @@ export class Environment{
 
     getVariable(name) { 
         const cuurrentValue = this.variables[name]; 
-        if (cuurrentValue) {
+        if (cuurrentValue !== undefined) {
             return cuurrentValue;
         }
 

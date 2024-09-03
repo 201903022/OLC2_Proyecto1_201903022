@@ -1,16 +1,16 @@
-export class BreaKException extends error{ 
+export class BreaKException extends Error{ 
     constructor(){
         super('BreakException');
     }
 }
 
-export class ContinueException extends error{ 
+export class ContinueException extends Error{ 
     constructor(){
         super('ContinueException');
     }
 }
 
-export class ReturnException extends error{ 
+export class ReturnException extends Error{ 
     constructor(value){
         super('ReturnException');
         this.value = value;

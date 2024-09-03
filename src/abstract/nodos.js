@@ -487,4 +487,67 @@ export class While extends Expresion {
     }
 }
     
-export default { Expresion, Primitive, OperacionBinaria, OpLogica, OperacionUnaria, Agrupacion, Numero, DeclaracionVariable, ReferenciaVariable, Print, ExpresionStmt, Asignacion, Bloque, If, While }
+export class Break extends Expresion {
+
+    /**
+    * @param {Object} options
+    * 
+    */
+    constructor({  }) {
+        super();
+        
+    }
+
+    /**
+     * @param {BaseVisitor} visitor
+     */
+    accept(visitor) {
+        return visitor.visitBreak(this);
+    }
+}
+    
+export class Continue extends Expresion {
+
+    /**
+    * @param {Object} options
+    * 
+    */
+    constructor({  }) {
+        super();
+        
+    }
+
+    /**
+     * @param {BaseVisitor} visitor
+     */
+    accept(visitor) {
+        return visitor.visitContinue(this);
+    }
+}
+    
+export class Return extends Expresion {
+
+    /**
+    * @param {Object} options
+    * @param {Expresion} options.value Valor a retornar
+    */
+    constructor({ value }) {
+        super();
+        
+        /**
+         * Valor a retornar
+         * @type {Expresion}
+        */
+        this.value = value;
+
+    }
+
+    /**
+     * @param {BaseVisitor} visitor
+     */
+    accept(visitor) {
+        return visitor.visitReturn(this);
+    }
+}
+    
+export default { Expresion, Primitive, OperacionBinaria, OpLogica, OperacionUnaria, Agrupacion, Numero, DeclaracionVariable, ReferenciaVariable, Print, ExpresionStmt, Asignacion, Bloque, If, While, Break, Continue, Return }

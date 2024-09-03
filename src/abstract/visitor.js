@@ -45,6 +45,15 @@
 
  * @typedef {import('./nodos').While} While
 
+
+ * @typedef {import('./nodos').Break} Break
+
+
+ * @typedef {import('./nodos').Continue} Continue
+
+
+ * @typedef {import('./nodos').Return} Return
+
  */
 
 
@@ -187,6 +196,33 @@ export class BaseVisitor {
      */
     visitWhile(node) {
         throw new Error('Metodo visitWhile no implementado');
+    }
+    
+
+    /**
+     * @param {Break} node
+     * @returns {any}
+     */
+    visitBreak(node) {
+        throw new Error('Metodo visitBreak no implementado');
+    }
+    
+
+    /**
+     * @param {Continue} node
+     * @returns {any}
+     */
+    visitContinue(node) {
+        throw new Error('Metodo visitContinue no implementado');
+    }
+    
+
+    /**
+     * @param {Return} node
+     * @returns {any}
+     */
+    visitReturn(node) {
+        throw new Error('Metodo visitReturn no implementado');
     }
     
 }

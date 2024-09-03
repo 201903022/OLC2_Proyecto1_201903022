@@ -15,7 +15,10 @@
       'asignacion': nodos.Asignacion,
       'bloque': nodos.Bloque,
       'if': nodos.If,
-      'while': nodos.While
+      'while': nodos.While,
+      'break': nodos.Break,
+      'continue': nodos.Continue,
+      'return': nodos.Return
     }
 
     const nodo = new tipos[tipoNodo](props)
@@ -39,13 +42,17 @@ TypesValues = "int" { return "int"}
           /"var" {return "var"}
 
 Stmt = "print(" _ exp:Expresion _ ")" _ ";" { return crearNodo('print', { exp }) }
-    / exp:Expresion _ ";" { return crearNodo('expresionStmt', { exp }) }
     / bl:Bloque {return bl}
     / "if" _ "(" _ cond:Expresion _ ")" _ stmtTrue:Stmt 
       stmtFalse:(
         _ "else" _ stmtFalse:Stmt { return stmtFalse } 
       )? { return crearNodo('if', { cond, stmtTrue, stmtFalse }) }
     / "while" _ "(" _ cond:Expresion _ ")" _ stmt:Stmt { return crearNodo('while', { cond, stmt }) }
+    / "break" _ ";" {  console.log('breakPaa');
+    return crearNodo('break', {}) }
+    / "continue" _ ";" { return crearNodo('continue') }
+    / "return" _ exp:Expresion? _ ";" {return crearNodo('return',{ exp } ) }
+    / exp:Expresion _ ";" { return crearNodo('expresionStmt', { exp }) }
 
 Bloque = "{" _ dcls:Declaracion* _ "}" { return crearNodo('bloque', { dcls }) }
 
@@ -59,8 +66,6 @@ Asignacion = id:Identificador _ "=" _ asgn:Asignacion { return crearNodo('asigna
 
 // asignTypes = "+=" "-=" "="
 //logical: "&&" "||"
- //w
-
 //Term: "+" "-"
 //Factor: "*" "/"
 //unary: "!" "-" 

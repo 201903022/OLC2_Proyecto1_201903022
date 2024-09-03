@@ -1,7 +1,8 @@
 import {BaseVisitor} from '../abstract/visitor.js'
 import {Environment} from '../Environment/environment.js'
 import {Dato} from '../Clases/Dato.js'
-import {roundToDecimal} from '../utils/util.js'
+import {BreaKException,ContinueException,ReturnException} from '../Clases/Transeferer.js'
+
 export class InterpreteVisitor extends BaseVisitor {
     
     constructor() {
@@ -384,8 +385,8 @@ export class InterpreteVisitor extends BaseVisitor {
             this.environment = pastEnv;
             
         } catch (error) {
-            
-            throw new Error('Metodo visitBloque no implementado');
+            let err = 'a'
+            throw new Error(`Error in visit Bloque: ${error}`);
         }
 
     }
@@ -407,7 +408,10 @@ export class InterpreteVisitor extends BaseVisitor {
             }
             
         } catch (error) {            
-            throw new Error('Metodo visitIf no implementado');
+
+            throw new Error(
+                `Error in visitIf: ${error}`
+);
         }
 
 
@@ -417,17 +421,26 @@ export class InterpreteVisitor extends BaseVisitor {
  * @type{BaseVisitor['visitWhile']}
  */
     visitWhile(node) {        
+        console.log('WHILEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE')
         const startingEnv = this.environment;
         try {
 
             while (node.cond.accept(this).value) {
                 node.stmt.accept(this);
+                console.log('node: ',node.stmt.accept(this))
                // this.environment = new Environment(startingEnv);
             }
             
         } catch (error) {  
             this.environment = startingEnv;
-            
+            if (error instanceof BreaKException) {
+                console.log('BreaaaaaKing')
+                return;                            
+            }
+            if (error instanceof ContinueException) {
+                console.log('Continuing')
+                return this.visitWhile(node) ;                            
+            }
             
         }
 
@@ -436,7 +449,7 @@ export class InterpreteVisitor extends BaseVisitor {
 /**
  * @type{BaseVisitor['visitFor']}
  */
-    visitFor(node) {
+    visitFor(node) {        
         throw new Error('Metodo visitFor no implementado');
     }
     
@@ -444,21 +457,26 @@ export class InterpreteVisitor extends BaseVisitor {
  * @type{BaseVisitor['visitBreak']}
  */
     visitBreak(node) {
-        throw new Error('Metodo visitBreak no implementado');
+        console.log('BREAAAAAK')
+        throw new BreaKException();        
     }
     
 /**
  * @type{BaseVisitor['visitContinue']}
  */
     visitContinue(node) {
-        throw new Error('Metodo visitContinue no implementado');
+        throw new ContinueException();
     }
     
 /**
  * @type{BaseVisitor['visitReturn']}
  */
     visitReturn(node) {
-        throw new Error('Metodo visitReturn no implementado');
+        let value = null;
+        if(node.exp){ 
+            value = node.exp.accept(this); 
+        }
+        throw new ReturnException(value);        
     }
     
 /**
