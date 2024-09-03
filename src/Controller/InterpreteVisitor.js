@@ -204,11 +204,11 @@ export class InterpreteVisitor extends BaseVisitor {
             const left = node.izq.accept(this); 
             const right = node.der.accept(this); 
 
-          //  console.log('visitOplogica')
+            console.log('visitOplogica')
            // console.log('node: ',node)
             switch (node.op) {
                 case '==':
-                    console.log('==')
+                    //console.log('==')
                     if (left.value === right.value) {
                         return new Dato('bool',true,node.location)
                         
@@ -216,33 +216,33 @@ export class InterpreteVisitor extends BaseVisitor {
                         return new Dato('bool',false,node.location)                        
                     }
                 case '!=':
-                    console.log('!=')
+                    //console.log('!=')
                     if (left.value !== right.value) {
                         return new Dato('bool',true,node.location)
                     }
                     return new Dato('bool',false,node.location)
                 case '>':
-                    console.log('>')
+                    //console.log('>')
                     if (left.value > right.value) {
                         return new Dato('bool',true,node.location)
                     }
                     return new Dato('bool',false,node.location)
                 case '<':
-                    console.log('<')
+                    //console.log('<')
                     if (left.value < right.value) {
                         return new Dato('bool',true,node.location)
                     }
                     return new Dato('bool',false,node.location)
                 case '>=':
-                    console.log('>=')
+                    //console.log('>=')
                     if (left.value >= right.value) {
                         return new Dato('bool',true,node.location)
                     }
                     return new Dato('bool',false,node.location)
                 case '<=':
-                    console.log('<=')
+                    //console.log('<=')
                     if (left.value <= right.value) {
-                        console.log(left.value , ' <= ', right.value)
+                        //console.log(left.value , ' <= ', right.value)
                         return new Dato('bool',true,node.location)
                     }
                     return new Dato('bool',false,node.location)
@@ -272,13 +272,8 @@ export class InterpreteVisitor extends BaseVisitor {
 /**
  * @type{BaseVisitor['visitAgrupacion']}
  */
-    visitAgrupacion(node) {
-        try {
-            
+    visitAgrupacion(node) {            
             return node.exp.accept(this);
-        } catch (error) {
-            throw new Error('Error trying to visitAgrupacion')
-        }
     }
     
 /**
@@ -294,7 +289,6 @@ export class InterpreteVisitor extends BaseVisitor {
  * @type{BaseVisitor['visitDeclaracionVariable']}
  */
     visitDeclaracionVariable(node) {
-        try {
           //  console.log('Visit Declaracion Variable')
          //   console.log('Id: ', node.id)
          ///   console.log('Exp: ', node.exp)
@@ -305,10 +299,6 @@ export class InterpreteVisitor extends BaseVisitor {
             
             this.environment.assignVariable(node.id,value,node.typeD)
            // console.log('Variable is added to enviroment')
-        } catch (error) {
-            console.log('Errooooooooor: ',error)
-            throw new Error(`Error tryin to declarate a variable "${node.id}" ${error}`)
-        }
 
     }
     
@@ -335,7 +325,7 @@ export class InterpreteVisitor extends BaseVisitor {
       //  console.log('value node.exp: ',node.exp.value)
        // console.log('Valor: ', node.exp.accept(this))
        const value = node.exp.accept(this); 
-       console.log('Valor Valueee: ', value)
+      // console.log('Valor Valueee: ', value)
        if (value.type) {
           // console.log('tiene tipooo ')
           // console.log(value.type)
@@ -365,9 +355,9 @@ export class InterpreteVisitor extends BaseVisitor {
     visitAsignacion(node) {
         
         console.log("asignacion ")
-        console.log('node.id ',node.id)
-        console.log('node.exp ',node.exp)
-        console.log(node)
+        //console.log('node.id ',node.id)
+        //console.log('node.exp ',node.exp)
+        //console.log(node)
 
         const varName = node.id; 
         const value = node.asgn.accept(this);
@@ -378,26 +368,16 @@ export class InterpreteVisitor extends BaseVisitor {
  * @type{BaseVisitor['visitBloque']}
  */
     visitBloque(node) {
-
-        try {
             const pastEnv = this.environment; 
             this.environment = new Environment(pastEnv);
-            node.dcls.forEach(dcl => dcl.accept(this)); 
-    
-            this.environment = pastEnv;
-            
-        } catch (error) {
-            let err = 'a'
-            throw new Error(`Error in visit Bloque: ${error}`);
-        }
-
+            node.dcls.forEach(dcl => dcl.accept(this));     
+            this.environment = pastEnv;            
     }
     
 /**
  * @type{BaseVisitor['visitIf']}
  */
     visitIf(node) {
-        try {
             const cond = node.cond.accept(this); 
     
             if (cond.value) {
@@ -408,15 +388,6 @@ export class InterpreteVisitor extends BaseVisitor {
             if (node.stmtFalse) {
                 node.stmtFalse.accept(this);
             }
-            
-        } catch (error) {            
-
-            throw new Error(
-                `Error in visitIf: ${error}`
-);
-        }
-
-
     }
     
 /**
@@ -428,6 +399,7 @@ export class InterpreteVisitor extends BaseVisitor {
         try {
 
             while (node.cond.accept(this).value) {
+                console.log('whileeee')
                 node.stmt.accept(this);
                // this.environment = new Environment(startingEnv);
             }
@@ -439,9 +411,8 @@ export class InterpreteVisitor extends BaseVisitor {
                 return;                            
             }
             if (error instanceof ContinueException) {
-                console.log('Continuing')
                 return this.visitWhile(node);                            
-            }            
+            }  
         }
 
     }
@@ -450,32 +421,27 @@ export class InterpreteVisitor extends BaseVisitor {
  * @type{BaseVisitor['visitFor']}
  */
     visitFor(node) {    
-        try {
-            const incB = this.prevContinue; 
-            this.prevContinue = node.inc; 
 
-            const forT = new nodos.Bloque({ 
-                dcls: [ 
-                    node.init,
-                    new nodos.While({ 
-                        cond: node.cond,
-                        stmt: new nodos.Bloque({ 
-                            dcls: [ 
-                                node.stmt,
-                                node.inc
-                            ]
-                            })
-                    })
-                ]                
-            })
-            forT.accept(this);
-            this.prevContinue = incB;
-            
-        } catch (error) {
-            throw new Error (`for: ${error}`)
-            
-        }
-            
+        //crear un while
+        const incB = this.prevContinue; 
+        this.prevContinue = node.inc; 
+
+        const forT = new nodos.Bloque({ 
+            dcls: [ 
+                node.init,
+                new nodos.While({ 
+                    cond: node.cond,
+                    stmt: new nodos.Bloque({ 
+                        dcls: [ 
+                            node.stmt,
+                            node.inc
+                        ]
+                        })
+                })
+            ]                
+        })
+        forT.accept(this);
+        this.prevContinue = incB;
     }
     
 /**
@@ -492,7 +458,8 @@ export class InterpreteVisitor extends BaseVisitor {
     visitContinue(node) {        
         console.log('Continueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee')
         if (this.prevContinue) {
-            this.prevContinue.accept(this);            
+            console.log('Continuing in', this.prevContinue)
+            this.prevContinue.accept(this);           
         }
 
         throw new ContinueException();

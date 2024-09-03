@@ -493,7 +493,7 @@ export class Break extends Expresion {
     * @param {Object} options
     * 
     */
-    constructor({  }) {
+    constructor() {
         super();
         
     }
@@ -512,7 +512,7 @@ export class Continue extends Expresion {
     * @param {Object} options
     * 
     */
-    constructor({  }) {
+    constructor() {
         super();
         
     }

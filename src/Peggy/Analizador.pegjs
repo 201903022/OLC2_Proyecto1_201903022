@@ -42,6 +42,7 @@ TypesValues = "int" { return "int"}
           /"bool"{ return "bool"}
           /"var" {return "var"}
 
+
 Stmt = "print(" _ exp:Expresion _ ")" _ ";" { return crearNodo('print', { exp }) }
     / bl:Bloque {return bl}
     / "if" _ "(" _ cond:Expresion _ ")" _ stmtTrue:Stmt 
@@ -55,11 +56,16 @@ Stmt = "print(" _ exp:Expresion _ ")" _ ";" { return crearNodo('print', { exp })
     }
     
     / "break" _ ";" {  console.log('breakPaa');
-    return crearNodo('break', {}) }
-    / "continue" _ ";" { return crearNodo('continue',{}) }
+    return crearNodo('break') }
+    / "continue" _ ";" { return crearNodo('continue') }
     / "return" _ exp:Expresion? _ ";" {return crearNodo('return',{ exp } ) }
+    //switch
+  //  / "switch" _ "(" _ exp:Expresion _ ")" "{"_ stmt:Stmt _"}" _  {   }
     / exp:Expresion _ ";" { return crearNodo('expresionStmt', { exp }) }
-
+/*
+CasesSwitch = "case"_exp:Expresion _ ":" stmtC:Stmt {}
+              /"default" _ ":" stmtDefault:Stmt{ }
+*/
 FortBegining = dcl:VarDcl {return dcl}
             / exp:Expresion _ ";" {return exp}
             /";" {return null }
@@ -77,6 +83,18 @@ Asignacion = id:Identificador _ "=" _ asgn:Asignacion { return crearNodo('asigna
 
 // asignTypes = "+=" "-=" "="
 //logical: "&&" "||"
+Logicals = izq:Relational expansion:( 
+  _ op:("&&" / "||") _ der:Relational { return { tipo: op, der } }
+)* { 
+  return expansion.reduce(
+    (operacionAnterior, operacionActual) => {
+      const { tipo, der } = operacionActual
+      return crearNodo('logica', { op:tipo, izq: operacionAnterior, der })
+    },
+    izq
+  )
+}
+
 //Term: "+" "-"
 //Factor: "*" "/"
 //unary: "!" "-" 
@@ -116,7 +134,6 @@ Comparacion = izq:Suma expansion:(
     izq
   )
 }
-
 */
 Suma = izq:Multiplicacion expansion:(
   _ op:("+" / "-") _ der:Multiplicacion { return { tipo: op, der } }
