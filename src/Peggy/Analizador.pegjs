@@ -50,7 +50,7 @@ Stmt = "print(" _ exp:Expresion _ ")" _ ";" { return crearNodo('print', { exp })
     / "while" _ "(" _ cond:Expresion _ ")" _ stmt:Stmt { return crearNodo('while', { cond, stmt }) }
     / "break" _ ";" {  console.log('breakPaa');
     return crearNodo('break', {}) }
-    / "continue" _ ";" { return crearNodo('continue') }
+    / "continue" _ ";" { return crearNodo('continue',{}) }
     / "return" _ exp:Expresion? _ ";" {return crearNodo('return',{ exp } ) }
     / exp:Expresion _ ";" { return crearNodo('expresionStmt', { exp }) }
 

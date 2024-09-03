@@ -440,8 +440,7 @@ export class InterpreteVisitor extends BaseVisitor {
             if (error instanceof ContinueException) {
                 console.log('Continuing')
                 return this.visitWhile(node) ;                            
-            }
-            
+            }            
         }
 
     }
@@ -465,6 +464,7 @@ export class InterpreteVisitor extends BaseVisitor {
  * @type{BaseVisitor['visitContinue']}
  */
     visitContinue(node) {
+        console.log('Continueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee')
         throw new ContinueException();
     }
     

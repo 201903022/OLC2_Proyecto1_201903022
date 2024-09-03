@@ -278,7 +278,7 @@ function peg$parse(input, options) {
   var peg$f14 = function(cond, stmt) { return crearNodo('while', { cond, stmt }) };
   var peg$f15 = function() {  console.log('breakPaa');
     return crearNodo('break', {}) };
-  var peg$f16 = function() { return crearNodo('continue') };
+  var peg$f16 = function() { return crearNodo('continue',{}) };
   var peg$f17 = function(exp) {return crearNodo('return',{ exp } ) };
   var peg$f18 = function(exp) { return crearNodo('expresionStmt', { exp }) };
   var peg$f19 = function(dcls) { return crearNodo('bloque', { dcls }) };
