@@ -57,6 +57,9 @@
 
  * @typedef {import('./nodos').For} For
 
+
+ * @typedef {import('./nodos').Llamada} Llamada
+
  */
 
 
@@ -235,6 +238,15 @@ export class BaseVisitor {
      */
     visitFor(node) {
         throw new Error('Metodo visitFor no implementado');
+    }
+    
+
+    /**
+     * @param {Llamada} node
+     * @returns {any}
+     */
+    visitLlamada(node) {
+        throw new Error('Metodo visitLlamada no implementado');
     }
     
 }

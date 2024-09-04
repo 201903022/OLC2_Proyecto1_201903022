@@ -3,13 +3,23 @@ import {Environment} from '../Environment/environment.js'
 import {Dato} from '../Clases/Dato.js'
 import {BreaKException,ContinueException,ReturnException} from '../Clases/Transeferer.js'
 import nodos from '../abstract/nodos.js';
-
+import {embebidas} from '../Functions/Embebidas.js'
+import {Invocable} from '../Functions/Invocable.js'
 export class InterpreteVisitor extends BaseVisitor {
     
     constructor() {
         super();
         this.environment = new Environment(undefined);
         this.outPut = '';
+
+        //funciones embebidas: 
+        Object.entries(embebidas).forEach(([nombre,funcion]) => { 
+            this.environment.assignVariable(nombre,funcion,'function')
+        });
+
+        /**
+         * @type {Expresion|null}
+         */
         this.prevContinue = null;
     }
 
@@ -378,16 +388,16 @@ export class InterpreteVisitor extends BaseVisitor {
  * @type{BaseVisitor['visitIf']}
  */
     visitIf(node) {
-            const cond = node.cond.accept(this); 
-    
-            if (cond.value) {
-                node.stmtTrue.accept(this);
-                return
-            }
-    
-            if (node.stmtFalse) {
-                node.stmtFalse.accept(this);
-            }
+        const cond = node.cond.accept(this); 
+
+        if (cond.value) {
+            node.stmtTrue.accept(this);
+            return
+        }
+
+        if (node.stmtFalse) {
+            node.stmtFalse.accept(this);
+        }
     }
     
 /**
@@ -475,12 +485,33 @@ export class InterpreteVisitor extends BaseVisitor {
         }
         throw new ReturnException(value);        
     }
-    
 /**
  * @type{BaseVisitor['visitLlamada']}
  */
-    visitLlamada(node) {
-        throw new Error('Metodo visitLlamada no implementado');
+    visitLlamada(node){ 
+        console.log('Llamada')
+        console.log('node')
+        console.log(node)
+        console.log("Variables Envior")
+        console.log(this.environment.variables)
+        console.log('')
+        const function1 = node.callee.accept(this);
+        console.log('Function1 ', function1)
+        console.log('node.args', node.args)
+        const args = node.args.map(arg => arg.accept(this));
+        if (!(function1 instanceof Invocable)) {
+            throw new Error('No es invocable')
+            
+        }
+
+        if (function1.aridad() !== args.length) {
+            throw new Error('No es la misma aridad')            
+        }
+
+        return function1.invocar(this,args);
+
     }
+    
+
 
 }

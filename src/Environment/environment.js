@@ -60,10 +60,15 @@ export class Environment{
        // console.log("array: ",array)
 
         const cuurrentValue = this.variables[name]; 
-        console.log('CurrentValue: ', cuurrentValue)
+//        console.log('CurrentValue: ', cuurrentValue)
         if (cuurrentValue === undefined) {
-            //var accepts any type
+            if (typeD === 'function') {
+                let dataSave = new Dato('function',value,null)
+                this.variables[name] = dataSave;
+                return;                                
+            }
             
+            //var accepts any type
             if (typeD === 'var') {
                 if (value) {
                     let datoToSave  = new Dato(value.type,value.value,value.location)
@@ -78,8 +83,7 @@ export class Environment{
                 this.variables[name] = datoToSave;
                 console.log(this.variables)
                 return;
-            }
-            
+            }            
             //check types 
             if (typeD === value.type) {
                 let datoToSave = new Dato(typeD,value.value,value.location)

@@ -599,4 +599,37 @@ export class For extends Expresion {
     }
 }
     
-export default { Expresion, Primitive, OperacionBinaria, OpLogica, OperacionUnaria, Agrupacion, Numero, DeclaracionVariable, ReferenciaVariable, Print, ExpresionStmt, Asignacion, Bloque, If, While, Break, Continue, Return, For }
+export class Llamada extends Expresion {
+
+    /**
+    * @param {Object} options
+    * @param {Expresion} options.callee Expresion a llamar
+ * @param {Expresion[]} options.args Argumentos de la llamada
+    */
+    constructor({ callee, args }) {
+        super();
+        
+        /**
+         * Expresion a llamar
+         * @type {Expresion}
+        */
+        this.callee = callee;
+
+
+        /**
+         * Argumentos de la llamada
+         * @type {Expresion[]}
+        */
+        this.args = args;
+
+    }
+
+    /**
+     * @param {BaseVisitor} visitor
+     */
+    accept(visitor) {
+        return visitor.visitLlamada(this);
+    }
+}
+    
+export default { Expresion, Primitive, OperacionBinaria, OpLogica, OperacionUnaria, Agrupacion, Numero, DeclaracionVariable, ReferenciaVariable, Print, ExpresionStmt, Asignacion, Bloque, If, While, Break, Continue, Return, For, Llamada }
