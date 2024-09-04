@@ -495,7 +495,7 @@ export class InterpreteVisitor extends BaseVisitor {
         console.log("Variables Envior")
         console.log(this.environment.variables)
         console.log('')
-        const function1 = node.callee.accept(this);
+        const function1 = node.callee.accept(this).value;
         console.log('Function1 ', function1)
         console.log('node.args', node.args)
         const args = node.args.map(arg => arg.accept(this));

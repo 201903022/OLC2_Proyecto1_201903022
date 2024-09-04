@@ -5,7 +5,7 @@ class NativeFunction extends Invocable{
     constructor(aridad,func) {
         super()
         this.aridad = aridad
-        this.func = func
+        this.invocar = func
     }
 }
 //aqui van las funciones nativas del enunciado: 
@@ -19,6 +19,7 @@ class NativeFunction extends Invocable{
 
 export const embebidas = {
     'time': new NativeFunction(() => 0, () => { 
-        return new Dato('number', new Date().getTime(),null)
+        console.log('HolaMundo TIMEEEEEEEEE')
+        return new Dato('string', '04/09/2024',null)
     })
 }
