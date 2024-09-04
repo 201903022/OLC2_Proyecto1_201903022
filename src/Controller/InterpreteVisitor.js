@@ -499,8 +499,11 @@ export class InterpreteVisitor extends BaseVisitor {
         console.log('Function1 ', function1)
         console.log('node.args', node.args)
         const args = node.args.map(arg => arg.accept(this));
+        console.log('args')
+        console.log(args)
+        console.log('Instance Of: ')
         if (!(function1 instanceof Invocable)) {
-            throw new Error('No es invocable')
+            throw new Error('No es invocable aaaa')
             
         }
 

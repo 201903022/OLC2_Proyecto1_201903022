@@ -131,7 +131,7 @@ Unaria = "-" _ num:Unaria { return crearNodo('unaria', { op: '-', exp: num }) }
 
 
 Llamada = callee:Numero _ params:("(" args:Argumentos? ")" { return args })* {
-  console.log('LLAMADAAAAAAAAAAPEGGGGYYY', args)
+  console.log("LLAMADA PEGGGYYYY");
   return params.reduce(
     (callee, args) => {
       return crearNodo('llamada', { callee, args: args || [] })
@@ -141,18 +141,15 @@ Llamada = callee:Numero _ params:("(" args:Argumentos? ")" { return args })* {
 }
 
 Argumentos = arg:Expresion _ args:("," _ exp:Expresion { 
-  console.log('expPegggy: ',exp)
   return exp })* { return [arg, ...args] }
 
-// { return{ tipo: "numero", valor: parseFloat(text(), 10) } }
 Numero = [0-9]+( "." [0-9]+ )+ {return crearNodo('primitive', { typeD:'float', value:Number(text(),0)  }) }
   / [0-9]+ {return crearNodo('primitive', { typeD:'int', value:Number(text(),0)  }) }
   / '"' [^\"]* '"' {return crearNodo('primitive', { typeD:'string', value:text().slice(1,-1) }) }
-  //  "'" [^\"]* "'" {return crearNodo('primitive', { typeD:'char', value:text().slice(1,-1) }) }
   / "true"   {return crearNodo('primitive', { typeD:'bool', value:'true'  }) }
   / "false" {return crearNodo('primitive', { typeD:'bool', value:'false'  }) }
   / "(" _ exp:Expresion _ ")" { return crearNodo('agrupacion', { exp }) }
-  / id:Identificador { return crearNodo('referenciaVariable', { id }) }
+  / id:Identificador {  return crearNodo('referenciaVariable', { id }) }
 
 _ = ([ \t\n\r] / Comments)*
 
