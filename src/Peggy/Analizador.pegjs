@@ -19,7 +19,9 @@
       'for': nodos.For,      
       'break': nodos.Break,
       'continue': nodos.Continue,
-      'return': nodos.Return
+      'return': nodos.Return,
+      'llamada': nodos.Llamada
+    
     }
 
     const nodo = new tipos[tipoNodo](props)
@@ -53,19 +55,13 @@ Stmt = "print(" _ exp:Expresion _ ")" _ ";" { return crearNodo('print', { exp })
     /"for" _ "(" _ init:FortBegining _  cond:Expresion _";" _ inc:Expresion ")" _ stmt:Stmt
      {
        return crearNodo('for', { init, cond, inc, stmt }) 
-    }
-    
+    }    
     / "break" _ ";" {  console.log('breakPaa');
     return crearNodo('break') }
     / "continue" _ ";" { return crearNodo('continue') }
     / "return" _ exp:Expresion? _ ";" {return crearNodo('return',{ exp } ) }
-    //switch
-  //  / "switch" _ "(" _ exp:Expresion _ ")" "{"_ stmt:Stmt _"}" _  {   }
     / exp:Expresion _ ";" { return crearNodo('expresionStmt', { exp }) }
-/*
-CasesSwitch = "case"_exp:Expresion _ ":" stmtC:Stmt {}
-              /"default" _ ":" stmtDefault:Stmt{ }
-*/
+
 FortBegining = dcl:VarDcl {return dcl}
             / exp:Expresion _ ";" {return exp}
             /";" {return null }
@@ -83,22 +79,6 @@ Asignacion = id:Identificador _ "=" _ asgn:Asignacion { return crearNodo('asigna
 
 // asignTypes = "+=" "-=" "="
 //logical: "&&" "||"
-Logicals = izq:Relational expansion:( 
-  _ op:("&&" / "||") _ der:Relational { return { tipo: op, der } }
-)* { 
-  return expansion.reduce(
-    (operacionAnterior, operacionActual) => {
-      const { tipo, der } = operacionActual
-      return crearNodo('logica', { op:tipo, izq: operacionAnterior, der })
-    },
-    izq
-  )
-}
-
-//Term: "+" "-"
-//Factor: "*" "/"
-//unary: "!" "-" 
-//equality: "==" "!=" 
 Equality = izq:Relational expansion:( 
   _ op:("==" / "!=") _ der:Relational { return { tipo: op, der } }
 )* { 
@@ -122,19 +102,6 @@ Relational = izq:Suma expansion:(
     izq
   )}
 
-/*
-Comparacion = izq:Suma expansion:(
-  _ op:("<=") _ der:Suma { return { tipo: op, der } }
-)* { 
-  return expansion.reduce(
-    (operacionAnterior, operacionActual) => {
-      const { tipo, der } = operacionActual
-      return crearNodo('binaria', { op:tipo, izq: operacionAnterior, der })
-    },
-    izq
-  )
-}
-*/
 Suma = izq:Multiplicacion expansion:(
   _ op:("+" / "-") _ der:Multiplicacion { return { tipo: op, der } }
 )* { 
@@ -159,17 +126,32 @@ Multiplicacion = izq:Unaria expansion:(
     )
 }
 
-Unaria = "-" _ num:Numero { return crearNodo('unaria', { op: '-', exp: num }) }
-/ Numero
+Unaria = "-" _ num:Unaria { return crearNodo('unaria', { op: '-', exp: num }) }
+/ Llamada
+
+
+Llamada = callee:Numero _ params:("(" args:Argumentos? ")" { return args })* {
+  console.log('LLAMADAAAAAAAAAAPEGGGGYYY', args)
+  return params.reduce(
+    (callee, args) => {
+      return crearNodo('llamada', { callee, args: args || [] })
+    },
+    callee
+  )
+}
+
+Argumentos = arg:Expresion _ args:("," _ exp:Expresion { 
+  console.log('expPegggy: ',exp)
+  return exp })* { return [arg, ...args] }
 
 // { return{ tipo: "numero", valor: parseFloat(text(), 10) } }
 Numero = [0-9]+( "." [0-9]+ )+ {return crearNodo('primitive', { typeD:'float', value:Number(text(),0)  }) }
   / [0-9]+ {return crearNodo('primitive', { typeD:'int', value:Number(text(),0)  }) }
   / '"' [^\"]* '"' {return crearNodo('primitive', { typeD:'string', value:text().slice(1,-1) }) }
   //  "'" [^\"]* "'" {return crearNodo('primitive', { typeD:'char', value:text().slice(1,-1) }) }
-  / "(" _ exp:Expresion _ ")" { return crearNodo('agrupacion', { exp }) }
   / "true"   {return crearNodo('primitive', { typeD:'bool', value:'true'  }) }
   / "false" {return crearNodo('primitive', { typeD:'bool', value:'false'  }) }
+  / "(" _ exp:Expresion _ ")" { return crearNodo('agrupacion', { exp }) }
   / id:Identificador { return crearNodo('referenciaVariable', { id }) }
 
 _ = ([ \t\n\r] / Comments)*
