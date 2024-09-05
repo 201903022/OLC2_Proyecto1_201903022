@@ -1,5 +1,6 @@
 import {InterpreteVisitor} from './src/Controller/InterpreteVisitor.js'
 import {parse} from './src/Peggy/analizador.js'
+import {ErrorsArr} from './src/Tables/Errors.js'
 let errorTable, symbolTable, OakdEditor, consoleResult, dotStringCst = "";
 /*Scrips Code Mirror */
 $(document).ready(function () {
@@ -123,6 +124,9 @@ const analysis = async () => {
         console.log('*******Interpete*******')
         console.log(Interpete.outPut)
         consoleResult.setValue(Interpete.outPut)
+        console.log('*******Errors*******')
+        console.log("====================")
+        console.log(ErrorsArr)
 
     } catch (error) {
         let outputError = ''; 

@@ -1,4 +1,5 @@
 import {Dato} from '../Clases/Dato.js'
+import {ErrorClass,ErrorsArr,ErrorCounts} from '../Tables/Errors.js'
 export class Environment{ 
     /**
      * @param {Environment} before
@@ -19,19 +20,44 @@ export class Environment{
 
         const CurrentValue = this.variables[name];
         if (CurrentValue) {
+            //null
+            if (CurrentValue.type === 'null') {
+                this.variables[name] = value;
+                return;
+                
+            }
+
+            if (value.type ==='null') {
+                this.variables[name] = value;
+                //errStr 
+                const errStr = `Type mismatch ${CurrentValue.type} != ${value.type} in "${name}"   ${value.value} is not ${CurrentValue.type} `
+                const errToSave = new ErrorClass(ErrorCounts,errStr,1,1,"semantico")
+                ErrorsArr.push(errToSave)
+                console.log(errStr)
+                return;                
+            }
+
             //check types
             if (CurrentValue.type === value.type) {
                 this.variables[name] = value;
                 return;
             }else{ 
-                throw new Error(`Type mismatch ${CurrentValue.type} != ${value.type} in "${name}"   ${value.value} is not ${CurrentValue.type} `)
+                const errStr = `Type mismatch ${CurrentValue.type} != ${value.type} in "${name}"   ${value.value} is not ${CurrentValue.type} `
+                const errToSave = new ErrorClass(ErrorCounts,errStr,1,1,"semantico")
+                ErrorsArr.push(errToSave)
+                console.log(errStr)
+                return;
             }
         }
         if (!CurrentValue && this.before) {
             this.before.setVariable(name,value);
             return;
         }   
-        throw new Error(`Variable "${name}" undefined`)     
+        const errStr = `Type mismatch ${CurrentValue.type} != ${value.type} in "${name}"   ${value.value} is not ${CurrentValue.type} `
+        const errToSave = new ErrorClass(ErrorCounts,`variable "${name}" is undefined`,1,1,"semantico")
+        ErrorsArr.push(errToSave)
+        console.log(errStr)
+        return;        
     }
 
     /**
@@ -47,20 +73,16 @@ export class Environment{
         if (!cuurrentValue && this.before) { 
             return this.before.getVariable(name);            
         }
-
-        throw new Error(`Variable ${name} undefined`)
+        const errToSave = new ErrorClass(ErrorCounts,"Variable undefined", value.location.start.line,value.location.start.column, "sintactico")
+        console.log('Type mismatch')
+        console.log(errToSave)
+        console.log(value.location)
+        ErrorsArr.push(errToSave)
+        return new Dato(null,null,null,null)
     }
 
     assignVariable(name,value,typeD) { 
-            //this.variables [name] = {tipo:tipo, value:value }
-       // console.log("***********************************************************")
-      //  console.log("name: ",name)
-       // console.log("value: ",value)
-       // console.log("typeD: ",typeD)
-       // console.log("array: ",array)
-
         const cuurrentValue = this.variables[name]; 
-//        console.log('CurrentValue: ', cuurrentValue)
         if (cuurrentValue === undefined) {
             if (typeD === 'function') {
                 let dataSave = new Dato('function',value,null)
@@ -94,19 +116,30 @@ export class Environment{
                 return;                
             }
             else{ 
+                const datoToSave = new Dato('null',null,value.location);
+                this.variables[name] = datoToSave;
+                const errStr = `Type mismatch ${name} is ${typeD}`
+                const errToSave = new ErrorClass(ErrorCounts,errStr, value.location.start.line,value.location.start.column, "sintactico")
                 console.log('Type mismatch')
-                throw new Error(`Type mismatch ${typeD} != ${value.type}`)
+                console.log(errToSave)
+                console.log(value.location)
+                ErrorsArr.push(errToSave)
+                return
             }
-
+            
         }
-
+        
         if (cuurrentValue === undefined && this.before) { 
             console.log('aaaa cuurrentValue === undefined && this.before')
             this.before.assignVariable(name,value);            
             return;
         }
         console.log('Variable undefined')
-        throw new Error(`Variable "${name}" already defined`)
+        const errTosave = `variable ${name} already defined: ${cuurrentValue.value}`
+        const errToSave = new ErrorClass(ErrorCounts,errTosave, value.location.line,value.location.column, "sintactico")
+        ErrorsArr.push(errToSave)
+        //ErrorCounts++;
+        return;
     }
         
 }

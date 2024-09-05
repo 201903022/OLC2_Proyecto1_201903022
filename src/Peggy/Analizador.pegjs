@@ -148,6 +148,7 @@ Numero = [0-9]+( "." [0-9]+ )+ {return crearNodo('primitive', { typeD:'float', v
   / '"' [^\"]* '"' {return crearNodo('primitive', { typeD:'string', value:text().slice(1,-1) }) }
   / "true"   {return crearNodo('primitive', { typeD:'bool', value:'true'  }) }
   / "false" {return crearNodo('primitive', { typeD:'bool', value:'false'  }) }
+  / "null" {return crearNodo('primitive', { typeD:'null', value:null  }) }
   / "(" _ exp:Expresion _ ")" { return crearNodo('agrupacion', { exp }) }
   / id:Identificador {  return crearNodo('referenciaVariable', { id }) }
 

@@ -5,13 +5,15 @@ import {BreaKException,ContinueException,ReturnException} from '../Clases/Transe
 import nodos from '../abstract/nodos.js';
 import {embebidas} from '../Functions/Embebidas.js'
 import {Invocable} from '../Functions/Invocable.js'
+import {ErrorClass,ErrorsArr,ErrorCounts} from '../Tables/Errors.js'
 export class InterpreteVisitor extends BaseVisitor {
     
     constructor() {
         super();
         this.environment = new Environment(undefined);
         this.outPut = '';
-
+        //clean errosArr
+        ErrorsArr.splice(0,ErrorsArr.length)
         //funciones embebidas: 
         Object.entries(embebidas).forEach(([nombre,funcion]) => { 
             this.environment.assignVariable(nombre,funcion,'function')
@@ -71,9 +73,15 @@ export class InterpreteVisitor extends BaseVisitor {
             case 'char': 
                // console.log('char')
                 node.value = node.value.replace(/'/g, '');
-                return (new Dato(node.typeD,node.value,node.location))                
-            default:
-                throw new Error(`Type primitive is no supported ${typePrimitive}`);
+                return (new Dato(node.typeD,node.value,node.location))          
+            //null
+            case 'null':
+                return (new Dato(node.typeD,null,node.location))                
+                default:
+                    const errToSave = new ErrorClass(ErrorCounts,`Type primitiva is not supported ${tyepPrimitive}`,node.location.start.line,node.location.start.column,"semantico")
+                    ErrorsArr.push(errToSave)
+                    ErrorCounts++;
+                    return (new Dato(node.typeD,null,node.location))                
         }
         
     }
@@ -89,9 +97,10 @@ export class InterpreteVisitor extends BaseVisitor {
         const right = node.der.accept(this); 
         switch (node.op) {
             case '+':
-              //  console.log('Tipos a Sumar: ')
-               // console.log('left: ',left.type)
-               // console.log('right: ',right.type) 
+                if (left.type ==='null' || right.type === 'null') {
+                    return new Dato('null',null,node.location);                    
+                }
+
                 if (left.type === 'string' && right.type === 'string') {
                     let typeD = 'string';
                     let suma = left.value + right.value; 
@@ -123,85 +132,95 @@ export class InterpreteVisitor extends BaseVisitor {
                 }else{ 
                     throw new Error(`Operator is no supported ${node.op} cant add ${left.type} + ${right.type}`);
                 }                
-                case '-':
-                    if (left.type === 'string' || right.type === 'string') {
-                        throw new Error(`Operator is no supported ${node.op} cant substract using string`)                        
-                    } else if(left.type === 'int' && right.type === 'int') {
-                        let typeD = 'int';
-                        let suma = left.value - right.value; 
-                        suma = parseInt(suma);
-                        return (new Dato(typeD,suma,node.location));
-                        
-                    }else if (left.type === 'int' && right.type === 'float') {
-                        let typeD = 'float';
-                        let suma = left.value - right.value; 
-                       // suma = parseFloat(suma);
-                        return (new Dato(typeD,suma,node.location));
-                                        
-                    }else if (left.type === 'float' && right.type === 'float') {
-                        let typeD = 'float';
-                        let suma = left.value - right.value; 
-                        return (new Dato(typeD,suma,node.location));                    
-                    }else if (left.type === 'float' && right.type === 'int') {
-                        let typeD = 'float';
-                        let suma = left.value - right.value; 
-                       // suma = parseFloat(suma)
-                        return (new Dato(typeD,suma,node.location));                    
-                    }else{ 
-                        throw new Error(`Operator is no supported ${node.op} cant add ${left.type} + ${right.type}`);
-                    }                
-                case '*':
-                        if (left.type === 'string' || right.type === 'string') {
-                            throw new Error(`Operator is no supported ${node.op} cant substract using string`)                        
-                        } else if(left.type === 'int' && right.type === 'int') {
-                            let typeD = 'int';
-                            let mult =parseInt(left.value * right.value) ; 
-                            return (new Dato(typeD,mult,node.location));                            
-                        }else if (left.type === 'int' && right.type === 'float') {
-                            let typeD = 'float';
-                            let mult =parseFloat(left.value * right.value) ; 
-                            return (new Dato(typeD,mult,node.location));                                            
-                        }else if (left.type === 'float' && right.type === 'float') {
-                            let typeD = 'float';
-                            let mult =parseFloat(left.value * right.value) ; 
-                            return (new Dato(typeD,mult,node.location));                    
-                        }else if (left.type === 'float' && right.type === 'int') {
-                            let typeD = 'float';
-                            let mult =parseFloat(left.value * right.value) ; 
-                            return (new Dato(typeD,mult,node.location));                    
-                        }else{ 
-                            throw new Error(`Operator is no supported ${node.op} cant add ${left.type} + ${right.type}`);
-                        }                                                                
-                case '/':
-                            if (left.type === 'string' || right.type === 'string') {
-                                throw new Error(`Operator is no supported ${node.op} cant substract using string`)                        
-                            }  
-                            if (right.value === 0) {
-                                throw new Error('No se puede dividir entre 0')
-                                
-                            } 
-                            if(left.type === 'int' && right.type === 'int') {
-                                let typeD = 'int';
-                                let div =parseInt(left.value / right.value) ; 
-                                return (new Dato(typeD,div,node.location));
-                            }else if (left.type === 'int' && right.type === 'float') {
-                                let typeD = 'float';
-                                let div =parseFloat(left.value / right.value) ;
-                                return (new Dato(typeD,div,node.location));                                            
-                            }else if (left.type === 'float' && right.type === 'float') {
-                                let typeD = 'float';
-                                let div =parseFloat(left.value / right.value) ;
-                                return (new Dato(typeD,div,node.location));                    
-                            }else if (left.type === 'float' && right.type === 'int') {
-                                let typeD = 'float';
-                                let div =parseFloat(left.value / right.value) ;
-                                return (new Dato(typeD,div,node.location));                    
-                            }else{ 
-                                throw new Error(`Operator is no supported ${node.op} cant add ${left.type} + ${right.type}`);
-                            }
-                default:
-                    throw new Error(`Operator is no supported ${node.op}`);
+            case '-':
+                if (left.type ==='null' || right.type === 'null') {
+                    return new Dato('null',null,node.location);                    
                 }
+                if (left.type === 'string' || right.type === 'string') {
+                    throw new Error(`Operator is no supported ${node.op} cant substract using string`)                        
+                } else if(left.type === 'int' && right.type === 'int') {
+                    let typeD = 'int';
+                    let suma = left.value - right.value; 
+                    suma = parseInt(suma);
+                    return (new Dato(typeD,suma,node.location));
+                    
+                }else if (left.type === 'int' && right.type === 'float') {
+                    let typeD = 'float';
+                    let suma = left.value - right.value; 
+                    // suma = parseFloat(suma);
+                    return (new Dato(typeD,suma,node.location));
+                                    
+                }else if (left.type === 'float' && right.type === 'float') {
+                    let typeD = 'float';
+                    let suma = left.value - right.value; 
+                    return (new Dato(typeD,suma,node.location));                    
+                }else if (left.type === 'float' && right.type === 'int') {
+                    let typeD = 'float';
+                    let suma = left.value - right.value; 
+                    // suma = parseFloat(suma)
+                    return (new Dato(typeD,suma,node.location));                    
+                }else{ 
+                    throw new Error(`Operator is no supported ${node.op} cant add ${left.type} + ${right.type}`);
+                }                
+            case '*':
+                if (left.type ==='null' || right.type === 'null') {
+                    return new Dato('null',null,node.location);                    
+                }
+                if (left.type === 'string' || right.type === 'string') {
+                    throw new Error(`Operator is no supported ${node.op} cant substract using string`)                        
+                } else if(left.type === 'int' && right.type === 'int') {
+                    let typeD = 'int';
+                    let mult =parseInt(left.value * right.value) ; 
+                    return (new Dato(typeD,mult,node.location));                            
+                }else if (left.type === 'int' && right.type === 'float') {
+                    let typeD = 'float';
+                    let mult =parseFloat(left.value * right.value) ; 
+                    return (new Dato(typeD,mult,node.location));                                            
+                }else if (left.type === 'float' && right.type === 'float') {
+                    let typeD = 'float';
+                    let mult =parseFloat(left.value * right.value) ; 
+                    return (new Dato(typeD,mult,node.location));                    
+                }else if (left.type === 'float' && right.type === 'int') {
+                    let typeD = 'float';
+                    let mult =parseFloat(left.value * right.value) ; 
+                    return (new Dato(typeD,mult,node.location));                    
+                }else{ 
+                    throw new Error(`Operator is no supported ${node.op} cant add ${left.type} + ${right.type}`);
+                }                                                                
+            case '/':
+                if (left.type ==='null' || right.type === 'null') {
+                    return new Dato('null',null,node.location);                    
+                }
+                if (left.type === 'string' || right.type === 'string') {
+                    throw new Error(`Operator is no supported ${node.op} cant substract using string`)                        
+                }  
+                if (right.value === 0) {
+                    const errToSave = new ErrorClass(ErrorCounts,"0 cant be /",node.location.start.line,node.location.start.line)
+                    ErrorsArr.push(errToSave)
+                    return new Dato('null',null,node.location);                        
+                } 
+                if(left.type === 'int' && right.type === 'int') {
+                    let typeD = 'int';
+                    let div =parseInt(left.value / right.value) ; 
+                    return (new Dato(typeD,div,node.location));
+                }else if (left.type === 'int' && right.type === 'float') {
+                    let typeD = 'float';
+                    let div =parseFloat(left.value / right.value) ;
+                    return (new Dato(typeD,div,node.location));                                            
+                }else if (left.type === 'float' && right.type === 'float') {
+                    let typeD = 'float';
+                    let div =parseFloat(left.value / right.value) ;
+                    return (new Dato(typeD,div,node.location));                    
+                }else if (left.type === 'float' && right.type === 'int') {
+                    let typeD = 'float';
+                    let div =parseFloat(left.value / right.value) ;
+                    return (new Dato(typeD,div,node.location));                    
+                }else{ 
+                    throw new Error(`Operator is no supported ${node.op} cant add ${left.type} + ${right.type}`);
+                }
+            default:
+                throw new Error(`Operator is no supported ${node.op}`);
+            }
     }
 
     /**
