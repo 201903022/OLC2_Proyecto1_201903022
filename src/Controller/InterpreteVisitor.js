@@ -501,7 +501,6 @@ export class InterpreteVisitor extends BaseVisitor {
         const args = node.args.map(arg => arg.accept(this));
         console.log('args')
         console.log(args)
-        console.log('Instance Of: ')
         if (!(function1 instanceof Invocable)) {
             throw new Error('No es invocable aaaa')
             
@@ -510,7 +509,8 @@ export class InterpreteVisitor extends BaseVisitor {
         if (function1.aridad() !== args.length) {
             throw new Error('No es la misma aridad')            
         }
-
+        console.log('Function 1 again: ',function1)
+        console.log('this.args.value, ',args)
         return function1.invocar(this,args);
 
     }
