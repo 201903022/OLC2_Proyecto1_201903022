@@ -55,7 +55,6 @@ export class InterpreteVisitor extends BaseVisitor {
             case 'float':
                // console.log('float')                
                 node.value = Number(node.value);
-                node.value = roundToDecimal(node.value,4)
                // console.log('node.value: ', node.value)
                 return (new Dato(node.typeD,node.value,node.location))
             case 'string':

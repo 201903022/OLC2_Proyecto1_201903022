@@ -1,0 +1,11 @@
+int ab = parseint("10.9");
+print(ab);
+string a = tostring(10);
+print(a);
+string b = tolowercase("AAAAA");
+print(b);
+string c = touppercase("bbbbb");
+print(c);
+//typeof
+string d = typeof(10);
+print(d);
