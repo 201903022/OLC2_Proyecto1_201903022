@@ -101,6 +101,10 @@ export class InterpreteVisitor extends BaseVisitor {
                 if (left.type ==='null' || right.type === 'null') {
                     return new Dato('null',null,node.location);                    
                 }
+                if (left.value === null || right.value === null) {
+                    return new Dato('null',null,node.location);                    
+                }
+
 
                 if (left.type === 'string' && right.type === 'string') {
                     let typeD = 'string';
