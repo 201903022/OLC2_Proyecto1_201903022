@@ -317,29 +317,21 @@ export class InterpreteVisitor extends BaseVisitor {
  * @type{BaseVisitor['visitDeclaracionVariable']}
  */
     visitDeclaracionVariable(node) {
-          //  console.log('Visit Declaracion Variable')
-         //   console.log('Id: ', node.id)
-         ///   console.log('Exp: ', node.exp)
-         //   console.log('TypeD: ', node.typeD)  
-            const value = node.exp.accept(this);
-          //  console.log('Value: ', value.value)
-          //  console.log('Value Type: ', value.type)
-            
-            this.environment.assignVariable(node.id,value,node.typeD)
-           // console.log('Variable is added to enviroment')
-
+         let hasExp = false;
+         let value = new Dato('null',null,node.location) 
+         if (node.exp) {
+             value = node.exp.accept(this);    
+             hasExp = true;        
+         }        
+         this.environment.assignVariable(node.id,value,node.typeD,hasExp)
     }
     
 /**
  * @type{BaseVisitor['visitReferenciaVariable']}
  */
     visitReferenciaVariable(node) {
-      // console.log('Referencia de variableeeeee: ', node)
         const varName = node.id;
-        const value = this.environment.getVariable(varName);
-        if (!value) {
-            throw new Error(`Variable ${varName} undefined`)
-        }
+        const value = this.environment.getVariable(varName,node);
         return value;
     }
     
@@ -355,8 +347,8 @@ export class InterpreteVisitor extends BaseVisitor {
        const value = node.exp.accept(this); 
       // console.log('Valor Valueee: ', value)
        if (value.type) {
-          // console.log('tiene tipooo ')
-          // console.log(value.type)
+          console.log('tiene tipooo ')
+          console.log(value.type)
            if (value.type === 'float') {
                 let a = value.value.toFixed(4);
                 this.outPut += a + '\n';
@@ -389,7 +381,7 @@ export class InterpreteVisitor extends BaseVisitor {
 
         const varName = node.id; 
         const value = node.asgn.accept(this);
-        this.environment.setVariable(varName,value);
+        this.environment.setVariable(varName,value,node.location.start);
     }
     
 /**
