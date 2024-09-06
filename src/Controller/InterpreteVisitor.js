@@ -6,6 +6,7 @@ import nodos from '../abstract/nodos.js';
 import {embebidas} from '../Functions/Embebidas.js'
 import {Invocable} from '../Functions/Invocable.js'
 import {ErrorClass,ErrorsArr,ErrorCounts} from '../Tables/Errors.js'
+import { ForeignFunction } from '../Functions/Foreing.js';
 export class InterpreteVisitor extends BaseVisitor {
     
     constructor() {
@@ -523,6 +524,20 @@ export class InterpreteVisitor extends BaseVisitor {
         console.log('this.args.value, ',args)
         return function1.invocar(this,args);
 
+    }
+
+ 
+/**
+ *  
+ * @type{BaseVisitor['visitDclFunc']}
+ *  
+ */
+    visitDclFunc(node){ 
+        console.log('Visit DclFunc')
+        console.log(node)
+        const closure = this.environment;
+        const func = new ForeignFunction(node,closure);
+        this.environment.assignVariable(node.id,func,'function')
     }
     
 

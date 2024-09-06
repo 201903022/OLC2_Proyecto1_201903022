@@ -60,6 +60,9 @@
 
  * @typedef {import('./nodos').Llamada} Llamada
 
+
+ * @typedef {import('./nodos').DclFunc} DclFunc
+
  */
 
 
@@ -247,6 +250,15 @@ export class BaseVisitor {
      */
     visitLlamada(node) {
         throw new Error('Metodo visitLlamada no implementado');
+    }
+    
+
+    /**
+     * @param {DclFunc} node
+     * @returns {any}
+     */
+    visitDclFunc(node) {
+        throw new Error('Metodo visitDclFunc no implementado');
     }
     
 }

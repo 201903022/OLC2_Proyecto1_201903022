@@ -54,7 +54,8 @@ export class Environment{
             this.before.setVariable(name,value);
             return;
         }   
-        const errStr = `Type mismatch ${CurrentValue.type} != ${value.type} in "${name}"   ${value.value} is not ${CurrentValue.type} `
+        //const errStr = `Type mismatch ${CurrentValue.type? CurrentValue.type:'false'} != ${CurrentValue.type? CurrentValue.type:'false'} in "${name}"   ${value.value} is not ${CurrentValue.type? CurrentValue.type:'false'} `
+        const errStr = `Type mismatch set variable ${name} `
         const errToSave = new ErrorClass(ErrorCounts,`variable "${name}" is undefined`,1,1,"semantico")
         ErrorsArr.push(errToSave)
         console.log(errStr)
@@ -148,5 +149,8 @@ export class Environment{
         //ErrorCounts++;
         return;
     }
+
+
+
         
 }

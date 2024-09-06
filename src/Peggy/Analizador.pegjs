@@ -20,7 +20,8 @@
       'break': nodos.Break,
       'continue': nodos.Continue,
       'return': nodos.Return,
-      'llamada': nodos.Llamada
+      'llamada': nodos.Llamada,
+      'DclFunc':nodos.DclFunc
     
     }
 
@@ -33,10 +34,25 @@
 programa = _ dcl:Declaracion* _ { return dcl }
 
 Declaracion = dcl:VarDcl _ { return dcl }
+            / dcl:DclFunc _ { return dcl}
             / stmt:Stmt _ { return stmt }
 
 //VarDcl = tipo:TypesValues _ id:Identificador _ "=" _ exp:Expresion _ ";" { return crearNodo('declaracionVariable', { id:id, exp:exp,typeD:tipo }) }
 VarDcl = tipo:TypesValues _ id:Identificador _ asigna:("=" _ exp:Expresion{return exp})? _";" { return crearNodo('declaracionVariable', { id:id, exp:asigna,typeD:tipo }) }
+
+DclFunc = tipo:TypesValues _ "function"_ id:Identificador "(" _ params:Parametros? _ ")" _ bloque:Bloque { 
+  console.log('DclFunc')
+  return crearNodo('DclFunc',{id,params:params || [],bloque})
+}
+
+//Parametros = id:Identificador _ params:("," ids:Identificador{return ids})* { return [id, ...params] }
+Parametros = tipo:TypesValues _ id:Identificador _ params:("," tipo1:TypesValues _ ids:Identificador{ 
+      return { id:ids,typeD:tipo1 }
+      })* {
+   let abc = { id:id,typeD:tipo };
+   return [abc, ...params] 
+   }
+
 
 TypesValues = "int" { return "int"}
           /"float"{  return "float"}

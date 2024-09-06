@@ -632,4 +632,45 @@ export class Llamada extends Expresion {
     }
 }
     
-export default { Expresion, Primitive, OperacionBinaria, OpLogica, OperacionUnaria, Agrupacion, Numero, DeclaracionVariable, ReferenciaVariable, Print, ExpresionStmt, Asignacion, Bloque, If, While, Break, Continue, Return, For, Llamada }
+export class DclFunc extends Expresion {
+
+    /**
+    * @param {Object} options
+    * @param {string} options.id Identificador de la funcion
+ * @param {Expresion[]} options.params Parametros de la funcion
+ * @param {bloque} options.bloque Cuerpo de la funcion
+    */
+    constructor({ id, params, bloque }) {
+        super();
+        
+        /**
+         * Identificador de la funcion
+         * @type {string}
+        */
+        this.id = id;
+
+
+        /**
+         * Parametros de la funcion
+         * @type {Expresion[]}
+        */
+        this.params = params;
+
+
+        /**
+         * Cuerpo de la funcion
+         * @type {bloque}
+        */
+        this.bloque = bloque;
+
+    }
+
+    /**
+     * @param {BaseVisitor} visitor
+     */
+    accept(visitor) {
+        return visitor.visitDclFunc(this);
+    }
+}
+    
+export default { Expresion, Primitive, OperacionBinaria, OpLogica, OperacionUnaria, Agrupacion, Numero, DeclaracionVariable, ReferenciaVariable, Print, ExpresionStmt, Asignacion, Bloque, If, While, Break, Continue, Return, For, Llamada, DclFunc }
