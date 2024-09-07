@@ -86,7 +86,7 @@ const saveFile = async (editor) => {
 
     // Solicitar al usuario que ingrese un nombre de archivo
     var nombreArchivo = prompt("Por favor, ingresa el nombre del archivo:", "nombreArchivo");
-    nombreArchivo += ".oa"
+    nombreArchivo += ".oak"
     if (nombreArchivo) {
         enlaceDescarga.download = nombreArchivo;
 
