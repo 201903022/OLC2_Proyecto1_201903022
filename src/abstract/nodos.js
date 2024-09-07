@@ -636,13 +636,21 @@ export class DclFunc extends Expresion {
 
     /**
     * @param {Object} options
-    * @param {string} options.id Identificador de la funcion
+    * @param {string} options.type tipo de dato string,int...
+ * @param {string} options.id Identificador de la funcion
  * @param {Expresion[]} options.params Parametros de la funcion
  * @param {bloque} options.bloque Cuerpo de la funcion
     */
-    constructor({ id, params, bloque }) {
+    constructor({ type, id, params, bloque }) {
         super();
         
+        /**
+         * tipo de dato string,int...
+         * @type {string}
+        */
+        this.type = type;
+
+
         /**
          * Identificador de la funcion
          * @type {string}

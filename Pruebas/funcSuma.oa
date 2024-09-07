@@ -1,0 +1,6 @@
+int suma(int a,int b){
+  	int sumita = a + b; 
+  	print(a+b);
+  	return sumita;
+}
+int z = suma(5,6);

@@ -495,9 +495,13 @@ export class InterpreteVisitor extends BaseVisitor {
  */
     visitReturn(node) {
         let value = null;
-        if(node.exp){ 
-            value = node.exp.accept(this); 
+        console.log('Node Visit Return: ',node)
+        if(node.value){ 
+            
+            value = node.value.accept(this); 
+            console.log('Value in Visit Return', value)
         }
+        console.log('RETUUUUUURN;')
         throw new ReturnException(value);        
     }
 /**
@@ -540,6 +544,9 @@ export class InterpreteVisitor extends BaseVisitor {
         console.log('Visit DclFunc')
         console.log(node)
         const closure = this.environment;
+        if (node.type ==='void') {
+            console.log('no returna nada')
+        }
         const func = new ForeignFunction(node,closure);
         this.environment.assignVariable(node.id,func,'function')
     }

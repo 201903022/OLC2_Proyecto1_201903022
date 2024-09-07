@@ -20,8 +20,8 @@ export class ForeignFunction extends Invocable{
     */
 
     invocar(interprete,args){ 
-        const entorno = new Environment(this.closure);
-
+        const entorno = new Environment(this.closure);        
+        console.log('Tipo de funcion: ',this.nodo.type)
         this.nodo.params.forEach((param,i) =>{ 
             console.log('ForEach')
             console.log('Param: ',param);
@@ -43,6 +43,10 @@ export class ForeignFunction extends Invocable{
         } catch (error) {
             interprete.environment = EnvBeCalled
             if (error instanceof ReturnException) {
+                console.log("Has A return ")
+                console.log(error)
+                console.log('Error: ',error.value);
+
                 return error.value;
             }
             throw error;

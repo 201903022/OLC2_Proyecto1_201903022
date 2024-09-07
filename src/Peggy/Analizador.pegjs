@@ -40,13 +40,13 @@ Declaracion = dcl:VarDcl _ { return dcl }
 //VarDcl = tipo:TypesValues _ id:Identificador _ "=" _ exp:Expresion _ ";" { return crearNodo('declaracionVariable', { id:id, exp:exp,typeD:tipo }) }
 VarDcl = tipo:TypesValues _ id:Identificador _ asigna:("=" _ exp:Expresion{return exp})? _";" { return crearNodo('declaracionVariable', { id:id, exp:asigna,typeD:tipo }) }
 
-DclFunc = tipo:TypesValues _ "function"_ id:Identificador "(" _ params:Parametros? _ ")" _ bloque:Bloque { 
+DclFunc = tipo:TypesValues _  id:Identificador "(" _ params:Parametros? _ ")" _ bloque:Bloque { 
   console.log('DclFunc')
-  return crearNodo('DclFunc',{id,params:params || [],bloque})
+  return crearNodo('DclFunc',{ type:tipo,id,params:params || [],bloque})
 }
 
 //Parametros = id:Identificador _ params:("," ids:Identificador{return ids})* { return [id, ...params] }
-Parametros = tipo:TypesValues _ id:Identificador _ params:("," tipo1:TypesValues _ ids:Identificador{ 
+Parametros = tipo:TypesValues _ id:Identificador _ params:(","_ tipo1:TypesValues _ ids:Identificador{ 
       return { id:ids,typeD:tipo1 }
       })* {
    let abc = { id:id,typeD:tipo };
@@ -60,6 +60,8 @@ TypesValues = "int" { return "int"}
           /"char" {  return "char"}
           /"bool"{ return "bool"}
           /"var" {return "var"}
+          /"void"{ return "void"}
+
 
 
 Stmt = "print(" _ exp:Expresion _ ")" _ ";" { return crearNodo('print', { exp }) }
@@ -76,7 +78,7 @@ Stmt = "print(" _ exp:Expresion _ ")" _ ";" { return crearNodo('print', { exp })
     / "break" _ ";" {  console.log('breakPaa');
     return crearNodo('break') }
     / "continue" _ ";" { return crearNodo('continue') }
-    / "return" _ exp:Expresion? _ ";" {return crearNodo('return',{ exp } ) }
+    / "return" _ exp:Expresion? _ ";" {return crearNodo('return',{ value:exp } ) }
     / exp:Expresion _ ";" { return crearNodo('expresionStmt', { exp }) }
 
 FortBegining = dcl:VarDcl {return dcl}
