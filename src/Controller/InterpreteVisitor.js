@@ -96,16 +96,24 @@ export class InterpreteVisitor extends BaseVisitor {
         //tipo
         const left = node.izq.accept(this); 
         const right = node.der.accept(this); 
+        if (left.type ==='null' || right.type === 'null') {
+            const errStr = `Cant operand with value null `
+            const line = node.location.start.line
+            const column = node.location.start.column;
+            const errToSave = new ErrorClass(ErrorCounts,errStr,line,column,"semantico");
+            ErrorsArr.push(errToSave) ;
+            return new Dato('null',null,node.location)     
+        }
+        if (left.value === null || right.value === null) {
+            const errStr = `Cant operand with value null `
+            const line = node.location.start.line
+            const column = node.location.start.column;
+            const errToSave = new ErrorClass(ErrorCounts,errStr,line,column,"semantico");
+            ErrorsArr.push(errToSave) ;            
+            return new Dato('null',null,node.location);                    
+        }
         switch (node.op) {
             case '+':
-                if (left.type ==='null' || right.type === 'null') {
-                    return new Dato('null',null,node.location);                    
-                }
-                if (left.value === null || right.value === null) {
-                    return new Dato('null',null,node.location);                    
-                }
-
-
                 if (left.type === 'string' && right.type === 'string') {
                     let typeD = 'string';
                     let suma = left.value + right.value; 
@@ -138,9 +146,6 @@ export class InterpreteVisitor extends BaseVisitor {
                     throw new Error(`Operator is no supported ${node.op} cant add ${left.type} + ${right.type}`);
                 }                
             case '-':
-                if (left.type ==='null' || right.type === 'null') {
-                    return new Dato('null',null,node.location);                    
-                }
                 if (left.type === 'string' || right.type === 'string') {
                     throw new Error(`Operator is no supported ${node.op} cant substract using string`)                        
                 } else if(left.type === 'int' && right.type === 'int') {
@@ -168,9 +173,6 @@ export class InterpreteVisitor extends BaseVisitor {
                     throw new Error(`Operator is no supported ${node.op} cant add ${left.type} + ${right.type}`);
                 }                
             case '*':
-                if (left.type ==='null' || right.type === 'null') {
-                    return new Dato('null',null,node.location);                    
-                }
                 if (left.type === 'string' || right.type === 'string') {
                     throw new Error(`Operator is no supported ${node.op} cant substract using string`)                        
                 } else if(left.type === 'int' && right.type === 'int') {
@@ -193,9 +195,6 @@ export class InterpreteVisitor extends BaseVisitor {
                     throw new Error(`Operator is no supported ${node.op} cant add ${left.type} + ${right.type}`);
                 }                                                                
             case '/':
-                if (left.type ==='null' || right.type === 'null') {
-                    return new Dato('null',null,node.location);                    
-                }
                 if (left.type === 'string' || right.type === 'string') {
                     throw new Error(`Operator is no supported ${node.op} cant substract using string`)                        
                 }  
@@ -223,7 +222,32 @@ export class InterpreteVisitor extends BaseVisitor {
                 }else{ 
                     throw new Error(`Operator is no supported ${node.op} cant add ${left.type} + ${right.type}`);
                 }
+            case '%':
+                //just type int
+                if(left.type === 'int' && right.type === 'int') {
+                    if (right.value === 0) {
+                        console.log('Error ')//add to errorsarr
+                        const errStr = `Cant operand with 0 in "%" `
+                        const line = node.location.start.line
+                        const column = node.location.start.column;
+                        const errToSave = new ErrorClass(ErrorCounts,errStr,line,column,"semantico");
+                        ErrorsArr.push(errToSave) ;
+                        return new Dato('null',null,node.location)                      
+                    }
+                    let typeD = 'int';
+                    let mod =parseInt(left.value % right.value) ; 
+                    return (new Dato(typeD,mod,node.location));
+                }else{ 
+                    const errStr = `Operand "%" only 2 "int" `
+                    const line = node.location.start.line
+                    const column = node.location.start.column;
+                    const errToSave = new ErrorClass(ErrorCounts,errStr,line,column,"semantico");
+                    ErrorsArr.push(errToSave) ;
+                    return new Dato('null',null,node.location)                      
+                }                
+
             default:
+
                 throw new Error(`Operator is no supported ${node.op}`);
             }
     }
@@ -279,8 +303,21 @@ export class InterpreteVisitor extends BaseVisitor {
                         return new Dato('bool',true,node.location)
                     }
                     return new Dato('bool',false,node.location)
+                case '&&':
+                    //console.log('&&')
+                    if (left.value && right.value) {
+                        return new Dato('bool',true,node.location)
+                    }
+                    return new Dato('bool',false,node.location)
+                case '||':
+                    //console.log('||')
+                    if (left.value || right.value) {
+                        return new Dato('bool',true,node.location)
+                    }
+                    return new Dato('bool',false,node.location)                    
 
                 default:
+
                     throw new Error(`Operator is no supported ${node.op}`);
             }
 
@@ -295,7 +332,10 @@ export class InterpreteVisitor extends BaseVisitor {
         switch (node.op) {
             case '-':
                 let a = new Dato(exp.type, -(exp.value), node.location)
-                return a;    
+                return a;   
+            case '!': 
+                let b = new Dato('bool', !exp.value, node.location)
+                return b;  
             default:
                 throw new Error(`Operator is no supported ${node.op}`);
         }
@@ -355,7 +395,10 @@ export class InterpreteVisitor extends BaseVisitor {
           console.log('tiene tipooo ')
           console.log(value.type)
            if (value.type === 'float') {
-                let a = value.value.toFixed(4);
+            let a = value.value;
+                if (value.value !== null) {
+                    a = value.value.toFixed(4);                    
+                }
                 this.outPut += a + '\n';
            }else{ 
                this.outPut += value.value+ '\n';

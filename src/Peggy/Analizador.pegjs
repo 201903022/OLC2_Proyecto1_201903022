@@ -94,10 +94,22 @@ Identificador = [a-zA-Z][a-zA-Z0-9]* { return text() }
 Expresion = Asignacion
 
 Asignacion = id:Identificador _ "=" _ asgn:Asignacion { return crearNodo('asignacion', { id, asgn }) }
-          / Equality
+          / Logical
 
 // asignTypes = "+=" "-=" "="
 //logical: "&&" "||"
+Logical = izq:Equality expansion:( 
+  _ op:("&&" / "||") _ der:Equality { return { tipo: op, der } }
+)* { 
+  return expansion.reduce(
+    (operacionAnterior, operacionActual) => {
+      const { tipo, der } = operacionActual
+      return crearNodo('logica', { op:tipo, izq: operacionAnterior, der })
+    },
+    izq
+  )
+}
+
 Equality = izq:Relational expansion:( 
   _ op:("==" / "!=") _ der:Relational { return { tipo: op, der } }
 )* { 
@@ -134,7 +146,7 @@ Suma = izq:Multiplicacion expansion:(
 }
 
 Multiplicacion = izq:Unaria expansion:(
-  _ op:("*" / "/") _ der:Unaria { return { tipo: op, der } }
+  _ op:("*" / "/" / "%") _ der:Unaria { return { tipo: op, der } }
 )* {
     return expansion.reduce(
       (operacionAnterior, operacionActual) => {
@@ -146,7 +158,16 @@ Multiplicacion = izq:Unaria expansion:(
 }
 
 Unaria = "-" _ num:Unaria { return crearNodo('unaria', { op: '-', exp: num }) }
-/ Llamada
+        /"!" _ num:Unaria { return crearNodo('unaria', { op: '!', exp: num }) }
+       / Llamada
+
+Unarytypes = "-" { 
+  return "-" 
+}
+  / "!" { 
+    return "!" 
+  }
+
 
 
 Llamada = callee:Numero _ params:("(" args:Argumentos? ")" { return args })* {
@@ -165,6 +186,7 @@ Argumentos = arg:Expresion _ args:("," _ exp:Expresion {
 Numero = [0-9]+( "." [0-9]+ )+ {return crearNodo('primitive', { typeD:'float', value:Number(text(),0)  }) }
   / [0-9]+ {return crearNodo('primitive', { typeD:'int', value:Number(text(),0)  }) }
   / '"' [^\"]* '"' {return crearNodo('primitive', { typeD:'string', value:text().slice(1,-1) }) }
+  / "'" [^\']* "'" {return crearNodo('primitive', { typeD:'char', value:text().slice(1,-1) }) }
   / "true"   {return crearNodo('primitive', { typeD:'bool', value:'true'  }) }
   / "false" {return crearNodo('primitive', { typeD:'bool', value:'false'  }) }
   / "null" {return crearNodo('primitive', { typeD:'null', value:null  }) }
