@@ -628,8 +628,6 @@ export class InterpreteVisitor extends BaseVisitor {
         }
         const func = new ForeignFunction(node,closure);
         this.environment.assignVariable(node.id,func,'function')
-    }
-    
-
+    }    
 
 }
