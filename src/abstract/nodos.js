@@ -330,6 +330,31 @@ export class Print extends Expresion {
     }
 }
     
+export class Sout extends Expresion {
+
+    /**
+    * @param {Object} options
+    * @param {Expresion[]} options.exp Expresion a imprimir
+    */
+    constructor({ exp }) {
+        super();
+        
+        /**
+         * Expresion a imprimir
+         * @type {Expresion[]}
+        */
+        this.exp = exp;
+
+    }
+
+    /**
+     * @param {BaseVisitor} visitor
+     */
+    accept(visitor) {
+        return visitor.visitSout(this);
+    }
+}
+    
 export class ExpresionStmt extends Expresion {
 
     /**
@@ -681,4 +706,4 @@ export class DclFunc extends Expresion {
     }
 }
     
-export default { Expresion, Primitive, OperacionBinaria, OpLogica, OperacionUnaria, Agrupacion, Numero, DeclaracionVariable, ReferenciaVariable, Print, ExpresionStmt, Asignacion, Bloque, If, While, Break, Continue, Return, For, Llamada, DclFunc }
+export default { Expresion, Primitive, OperacionBinaria, OpLogica, OperacionUnaria, Agrupacion, Numero, DeclaracionVariable, ReferenciaVariable, Print, Sout, ExpresionStmt, Asignacion, Bloque, If, While, Break, Continue, Return, For, Llamada, DclFunc }

@@ -410,6 +410,42 @@ export class InterpreteVisitor extends BaseVisitor {
     }
     
 /**
+ * @type{BaseVisitor['visitSout']}
+*/
+    visitSout(node){ 
+        console.log('System.out.Println')
+        console.log('Node')
+        console.log(node)
+        console.log('Node.exp')
+        console.log(node.exp)
+        //forEach node.exp
+        node.exp.forEach(exp => {
+            console.log('Exp')
+            console.log(exp)
+            const value = exp.accept(this); 
+            console.log('Value')
+            console.log(value)
+            if (value.type) {
+                console.log('tiene tipooo ')
+                console.log(value.type)
+                if (value.type === 'float') {
+                 let a = value.value;
+                     if (value.value !== null) {
+                         a = value.value.toFixed(4);                    
+                     }
+                     this.outPut += a ;
+                }else{ 
+                    this.outPut += value.value;
+                }
+             }else{ 
+                 //no se xdd
+            }
+        })
+        this.outPut += '\n'
+
+
+    }
+/**
  * @type{BaseVisitor['visitExpresionStmt']}
  */
     visitExpresionStmt(node) {

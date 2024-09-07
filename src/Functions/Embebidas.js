@@ -40,11 +40,21 @@ export const embebidas = {
     }),
     //tolowercase
     'tolowercase': new NativeFunction(() => 1,(a,b) => { 
-        return new Dato('string',b[0].value.toLowerCase(),b[0].location)
+        if (b[0].type ==='string') {
+            return new Dato('string',b[0].value.toLowerCase(),b[0].location)            
+        }
+        
+
+        return new Dato('null',null,b[0].location)
     }),
     //touppercase
     'touppercase': new NativeFunction(() => 1,(a,b) => { 
-        return new Dato('string',b[0].value.toUpperCase(),b[0].location)
+        //validate Error: 
+        if (b[0].type ==='string') {
+            return new Dato('string',b[0].value.toUpperCase(),b[0].location)            
+        }
+        return new Dato('null',null,b[0].location)
+
     }),
     //typeof
     'typeof': new NativeFunction(() => 1,(a,b) => { 

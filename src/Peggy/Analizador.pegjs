@@ -11,6 +11,7 @@
       'declaracionVariable': nodos.DeclaracionVariable,
       'referenciaVariable': nodos.ReferenciaVariable,
       'print': nodos.Print,
+      'sout': nodos.Sout,      
       'expresionStmt': nodos.ExpresionStmt,
       'asignacion': nodos.Asignacion,
       'bloque': nodos.Bloque,
@@ -65,6 +66,7 @@ TypesValues = "int" { return "int"}
 
 
 Stmt = "print(" _ exp:Expresion _ ")" _ ";" { return crearNodo('print', { exp }) }
+    /"system.out.println(" _ exp:PrintComa _ ")" _ ";" { return crearNodo('sout', { exp }) }
     / bl:Bloque {return bl}
     / "if" _ "(" _ cond:Expresion _ ")" _ stmtTrue:Stmt 
       stmtFalse:(
@@ -86,12 +88,18 @@ FortBegining = dcl:VarDcl {return dcl}
             /";" {return null }
 
 
+
+
+
 Bloque = "{" _ dcls:Declaracion* _ "}" { return crearNodo('bloque', { dcls }) }
 
 
 Identificador = [a-zA-Z][a-zA-Z0-9]* { return text() }
 
 Expresion = Asignacion
+
+PrintComa = exp:Expresion _ params:("," _ exp1:Expresion 
+  { return exp1 })* { return [exp, ...params] }
 
 Asignacion = id:Identificador _ "=" _ asgn:Asignacion { return crearNodo('asignacion', { id, asgn }) }
           / Logical

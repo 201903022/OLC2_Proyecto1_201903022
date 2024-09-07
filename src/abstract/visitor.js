@@ -31,6 +31,9 @@
  * @typedef {import('./nodos').Print} Print
 
 
+ * @typedef {import('./nodos').Sout} Sout
+
+
  * @typedef {import('./nodos').ExpresionStmt} ExpresionStmt
 
 
@@ -160,6 +163,15 @@ export class BaseVisitor {
      */
     visitPrint(node) {
         throw new Error('Metodo visitPrint no implementado');
+    }
+    
+
+    /**
+     * @param {Sout} node
+     * @returns {any}
+     */
+    visitSout(node) {
+        throw new Error('Metodo visitSout no implementado');
     }
     
 

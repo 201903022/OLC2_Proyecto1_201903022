@@ -112,10 +112,11 @@ const cleanEditor = (editor) => {
 /* Analizador*/
 
 const analysis = async () => {
-    const text = OakdEditor.getValue();
+    const text = OakdEditor.getValue().toLowerCase();
     try {
         console.log('*******Code*******')
         console.log(text)
+        
         const result = parse(text);
         const Interpete = new InterpreteVisitor();
         console.log('*******Result*******')
