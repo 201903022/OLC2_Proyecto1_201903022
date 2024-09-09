@@ -42,47 +42,33 @@ export class InterpreteVisitor extends BaseVisitor {
      * @type{BaseVisitor['visitPrimitive']}
      */
 
-    visitPrimitive(node) {
-        
+    visitPrimitive(node) {        
         console.log('visitPrimitive')
-        let dato; 
         switch (node.typeD) {
             case 'int':
-               // console.log('int')
-                //dato
-                dato = new Dato(node.typeD, parseInt(node.value), node.location); 
-              //  console.log("Datoooo: ")
-               // console.log(dato)
                 node.value = Number(node.value); 
-                return (new Dato(node.typeD,node.value,node.location));    
+                return new Dato(node.typeD,node.value,node.location);    
             case 'float':
-               // console.log('float')                
                 node.value = Number(node.value);
-               // console.log('node.value: ', node.value)
-                return (new Dato(node.typeD,node.value,node.location))
+                return new Dato(node.typeD,node.value,node.location);
             case 'string':
                 let cadena = node.value;
                 cadena = cadena.replace(/\\'/g, "'").replace(/\\"/g, '"').replace(/\\n/g, '\n').replace(/\\t/g, '\t').replace(/\\/g, '\\');
-               // console.log('Cadenaaaaa ',cadena)
                 node.value = cadena;
-               // console.log('string')
-                return (new Dato(node.typeD,node.value,node.location))
+                return new Dato(node.typeD,node.value,node.location)
             case 'bool': 
-                //console.log('bool')
-                node.value = (node.value === 'true') ? true : false;
-                return (new Dato(node.typeD,node.value,node.location))
+                console.log('Boool')
+                console.log(node.value)
+                return new Dato(node.typeD,node.value,node.location)
             case 'char': 
-               // console.log('char')
                 node.value = node.value.replace(/'/g, '');
-                return (new Dato(node.typeD,node.value,node.location))          
-            //null
+                return new Dato(node.typeD,node.value,node.location)       
             case 'null':
-                return (new Dato(node.typeD,null,node.location))                
-                default:
+                return new Dato(node.typeD,null,node.location)               
+            default:
                     const errToSave = new ErrorClass(ErrorCounts,`Type primitiva is not supported ${tyepPrimitive}`,node.location.start.line,node.location.start.column,"semantico")
                     ErrorsArr.push(errToSave)
-                    ErrorCounts++;
-                    return (new Dato(node.typeD,null,node.location))                
+                    return new Dato('null',null,node.location)              
         }
         
     }
@@ -93,7 +79,6 @@ export class InterpreteVisitor extends BaseVisitor {
     visitOperacionBinaria(node) {
         console.log('**************************')
         console.log('Operacion Binaria')
-        //tipo
         const left = node.izq.accept(this); 
         const right = node.der.accept(this); 
         if (left.type ==='null' || right.type === 'null') {
@@ -147,7 +132,12 @@ export class InterpreteVisitor extends BaseVisitor {
                 }                
             case '-':
                 if (left.type === 'string' || right.type === 'string') {
-                    throw new Error(`Operator is no supported ${node.op} cant substract using string`)                        
+                    const errStr = `Cant substract with value type string `
+                    const line = node.location.start.line
+                    const column = node.location.start.column;
+                    const errToSave = new ErrorClass(ErrorCounts,errStr,line,column,"semantico");
+                    ErrorsArr.push(errToSave) ;            
+                    return new Dato('null',null,node.location);    
                 } else if(left.type === 'int' && right.type === 'int') {
                     let typeD = 'int';
                     let suma = left.value - right.value; 
@@ -157,7 +147,6 @@ export class InterpreteVisitor extends BaseVisitor {
                 }else if (left.type === 'int' && right.type === 'float') {
                     let typeD = 'float';
                     let suma = left.value - right.value; 
-                    // suma = parseFloat(suma);
                     return (new Dato(typeD,suma,node.location));
                                     
                 }else if (left.type === 'float' && right.type === 'float') {
@@ -170,11 +159,21 @@ export class InterpreteVisitor extends BaseVisitor {
                     // suma = parseFloat(suma)
                     return (new Dato(typeD,suma,node.location));                    
                 }else{ 
-                    throw new Error(`Operator is no supported ${node.op} cant add ${left.type} + ${right.type}`);
+                    const errStr = `Cant operand with type ${left.type} - ${right.type}`
+                    const line = node.location.start.line
+                    const column = node.location.start.column;
+                    const errToSave = new ErrorClass(ErrorCounts,errStr,line,column,"semantico");
+                    ErrorsArr.push(errToSave) ;            
+                    return new Dato('null',null,node.location);    
                 }                
             case '*':
                 if (left.type === 'string' || right.type === 'string') {
-                    throw new Error(`Operator is no supported ${node.op} cant substract using string`)                        
+                    const errStr = `Cant * with value string `
+                    const line = node.location.start.line
+                    const column = node.location.start.column;
+                    const errToSave = new ErrorClass(ErrorCounts,errStr,line,column,"semantico");
+                    ErrorsArr.push(errToSave) ;            
+                    return new Dato('null',null,node.location);    
                 } else if(left.type === 'int' && right.type === 'int') {
                     let typeD = 'int';
                     let mult =parseInt(left.value * right.value) ; 
@@ -192,11 +191,21 @@ export class InterpreteVisitor extends BaseVisitor {
                     let mult =parseFloat(left.value * right.value) ; 
                     return (new Dato(typeD,mult,node.location));                    
                 }else{ 
-                    throw new Error(`Operator is no supported ${node.op} cant add ${left.type} + ${right.type}`);
+                    const errStr = `Cant operand with type ${left.type} * ${right.type}`
+                    const line = node.location.start.line
+                    const column = node.location.start.column;
+                    const errToSave = new ErrorClass(ErrorCounts,errStr,line,column,"semantico");
+                    ErrorsArr.push(errToSave) ;            
+                    return new Dato('null',null,node.location);    
                 }                                                                
             case '/':
                 if (left.type === 'string' || right.type === 'string') {
-                    throw new Error(`Operator is no supported ${node.op} cant substract using string`)                        
+                    const errStr = `Cant operand with type ${left.type} / ${right.type}`
+                    const line = node.location.start.line
+                    const column = node.location.start.column;
+                    const errToSave = new ErrorClass(ErrorCounts,errStr,line,column,"semantico");
+                    ErrorsArr.push(errToSave) ;            
+                    return new Dato('null',null,node.location);    
                 }  
                 if (right.value === 0) {
                     const errToSave = new ErrorClass(ErrorCounts,"0 cant be /",node.location.start.line,node.location.start.line)
@@ -220,8 +229,12 @@ export class InterpreteVisitor extends BaseVisitor {
                     let div =parseFloat(left.value / right.value) ;
                     return (new Dato(typeD,div,node.location));                    
                 }else{ 
-                    throw new Error(`Operator is no supported ${node.op} cant add ${left.type} + ${right.type}`);
-                }
+                    const errStr = `Cant operand with type ${left.type} / ${right.type}`
+                    const line = node.location.start.line
+                    const column = node.location.start.column;
+                    const errToSave = new ErrorClass(ErrorCounts,errStr,line,column,"semantico");
+                    ErrorsArr.push(errToSave) ;            
+                    return new Dato('null',null,node.location);                    }
             case '%':
                 //just type int
                 if(left.type === 'int' && right.type === 'int') {
@@ -247,8 +260,12 @@ export class InterpreteVisitor extends BaseVisitor {
                 }                
 
             default:
-
-                throw new Error(`Operator is no supported ${node.op}`);
+                const errStr = `Cant operand with ${node.op} `
+                const line = node.location.start.line
+                const column = node.location.start.column;
+                const errToSave = new ErrorClass(ErrorCounts,errStr,line,column,"semantico");
+                ErrorsArr.push(errToSave) ;            
+                return new Dato('null',null,node.location);    
             }
     }
 
@@ -257,15 +274,11 @@ export class InterpreteVisitor extends BaseVisitor {
      */
     
     visitOpLogica(node){ 
-
             const left = node.izq.accept(this); 
             const right = node.der.accept(this); 
-
             console.log('visitOplogica')
-           // console.log('node: ',node)
             switch (node.op) {
                 case '==':
-                    //console.log('==')
                     if (left.value === right.value) {
                         return new Dato('bool',true,node.location)
                         
@@ -273,25 +286,21 @@ export class InterpreteVisitor extends BaseVisitor {
                         return new Dato('bool',false,node.location)                        
                     }
                 case '!=':
-                    //console.log('!=')
                     if (left.value !== right.value) {
                         return new Dato('bool',true,node.location)
                     }
                     return new Dato('bool',false,node.location)
                 case '>':
-                    //console.log('>')
                     if (left.value > right.value) {
                         return new Dato('bool',true,node.location)
                     }
                     return new Dato('bool',false,node.location)
                 case '<':
-                    //console.log('<')
                     if (left.value < right.value) {
                         return new Dato('bool',true,node.location)
                     }
                     return new Dato('bool',false,node.location)
                 case '>=':
-                    //console.log('>=')
                     if (left.value >= right.value) {
                         return new Dato('bool',true,node.location)
                     }
@@ -304,21 +313,23 @@ export class InterpreteVisitor extends BaseVisitor {
                     }
                     return new Dato('bool',false,node.location)
                 case '&&':
-                    //console.log('&&')
                     if (left.value && right.value) {
                         return new Dato('bool',true,node.location)
                     }
                     return new Dato('bool',false,node.location)
                 case '||':
-                    //console.log('||')
                     if (left.value || right.value) {
                         return new Dato('bool',true,node.location)
                     }
                     return new Dato('bool',false,node.location)                    
 
                 default:
-
-                    throw new Error(`Operator is no supported ${node.op}`);
+                    const errStr = `Cant operand with ${node.op}`
+                    const line = node.location.start.line
+                    const column = node.location.start.column;
+                    const errToSave = new ErrorClass(ErrorCounts,errStr,line,column,"semantico");
+                    ErrorsArr.push(errToSave) ;            
+                    return new Dato('null',null,node.location);    
             }
 
     }
@@ -334,10 +345,15 @@ export class InterpreteVisitor extends BaseVisitor {
                 let a = new Dato(exp.type, -(exp.value), node.location)
                 return a;   
             case '!': 
-                let b = new Dato('bool', !exp.value, node.location)
+                let b = new Dato('bool', !(exp.value), node.location)
                 return b;  
             default:
-                throw new Error(`Operator is no supported ${node.op}`);
+                const errStr = `Cant operand with ${node.op}`
+                const line = node.location.start.line
+                const column = node.location.start.column;
+                const errToSave = new ErrorClass(ErrorCounts,errStr,line,column,"semantico");
+                ErrorsArr.push(errToSave) ;            
+                return new Dato('null',null,node.location);    
         }
 
     }
@@ -353,8 +369,6 @@ export class InterpreteVisitor extends BaseVisitor {
  * @type{BaseVisitor['visitNumero']}
  */
     visitNumero(node) {
-        console.log('Visit Numero ')
-        console.log('Valor: ', node.valor)
         return node.valor;
     }
     
@@ -385,12 +399,7 @@ export class InterpreteVisitor extends BaseVisitor {
  */
     visitPrint(node) { 
         console.log('**********PRINT***********')
-       // console.log('Visit print')
-       /// console.log('Valor: aaaaaaaa', node) 
-      //  console.log('value node.exp: ',node.exp.value)
-       // console.log('Valor: ', node.exp.accept(this))
        const value = node.exp.accept(this); 
-      // console.log('Valor Valueee: ', value)
        if (value.type) {
           console.log('tiene tipooo ')
           console.log(value.type)
@@ -414,20 +423,9 @@ export class InterpreteVisitor extends BaseVisitor {
 */
     visitSout(node){ 
         console.log('System.out.Println')
-        console.log('Node')
-        console.log(node)
-        console.log('Node.exp')
-        console.log(node.exp)
-        //forEach node.exp
         node.exp.forEach(exp => {
-            console.log('Exp')
-            console.log(exp)
             const value = exp.accept(this); 
-            console.log('Value')
-            console.log(value)
             if (value.type) {
-                console.log('tiene tipooo ')
-                console.log(value.type)
                 if (value.type === 'float') {
                  let a = value.value;
                      if (value.value !== null) {
@@ -442,8 +440,6 @@ export class InterpreteVisitor extends BaseVisitor {
             }
         })
         this.outPut += '\n'
-
-
     }
 /**
  * @type{BaseVisitor['visitExpresionStmt']}
@@ -456,13 +452,8 @@ export class InterpreteVisitor extends BaseVisitor {
 /**
  * @type{BaseVisitor['visitAsignacion']}
  */
-    visitAsignacion(node) {
-        
-        console.log("asignacion ")
-        //console.log('node.id ',node.id)
-        //console.log('node.exp ',node.exp)
-        //console.log(node)
-
+    visitAsignacion(node) {        
+        console.log("visitAsignacion ")
         const varName = node.id; 
         const value = node.asgn.accept(this);
         this.environment.setVariable(varName,value,node.location.start);
@@ -483,12 +474,10 @@ export class InterpreteVisitor extends BaseVisitor {
  */
     visitIf(node) {
         const cond = node.cond.accept(this); 
-
         if (cond.value) {
             node.stmtTrue.accept(this);
             return
         }
-
         if (node.stmtFalse) {
             node.stmtFalse.accept(this);
         }
@@ -498,15 +487,23 @@ export class InterpreteVisitor extends BaseVisitor {
  * @type{BaseVisitor['visitWhile']}
  */
     visitWhile(node) {        
-        console.log('WHILEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE')
+        console.log('visitWhile')
         const startingEnv = this.environment;
         try {
-
+          //  let cond = node.cond.accept(this);
             while (node.cond.accept(this).value) {
-                console.log('whileeee')
                 node.stmt.accept(this);
+                /*
+                console.log('While Cond Changing')
+                console.log(cond)
+                 if(cond.value){ 
+                }
+                // cond = node.cond.accept(this);
+                console.log('While Cond Changing')
+                console.log(cond)
+                */
                // this.environment = new Environment(startingEnv);
-            }
+            }              
             
         } catch (error) {  
             this.environment = startingEnv;
@@ -525,11 +522,8 @@ export class InterpreteVisitor extends BaseVisitor {
  * @type{BaseVisitor['visitFor']}
  */
     visitFor(node) {    
-
-        //crear un while
         const incB = this.prevContinue; 
         this.prevContinue = node.inc; 
-
         const forT = new nodos.Bloque({ 
             dcls: [ 
                 node.init,
@@ -547,12 +541,52 @@ export class InterpreteVisitor extends BaseVisitor {
         forT.accept(this);
         this.prevContinue = incB;
     }
+/**
+ * @type{BaseVisitor['visitSwitch']}
+ */
+ visitSwitch(node){ 
+    console.log('Visit Switch '); 
+    console.log(node);
+    console.log('node.exp')
+    console.log(node.exp);
+    console.log('node.cases')
+    console.log(node.cases)
+    console.log('node.default')
+    console.log(node.default);
     
+    
+    /*
+    const startingEnv = this.environment;
+    const value = node.value.accept(this);
+    let isMatch = false;
+    let defaultStmt = null;
+    for (const caseNode of node.cases) {
+        if (caseNode.isDefault) {
+            defaultStmt = caseNode.stmt;
+            continue;
+        }
+        const caseValue = caseNode.value.accept(this);
+        if (caseValue.value === value.value) {
+            isMatch = true;
+        }
+        if (isMatch) {
+            caseNode.stmt.accept(this);
+            break;
+        }
+    }
+    if (!isMatch && defaultStmt) {
+        defaultStmt.accept(this);
+    }
+    this.environment = startingEnv;
+    */
+
+ }
+
 /**
  * @type{BaseVisitor['visitBreak']}
  */
     visitBreak(node) {
-        console.log('BREAAAAAK')
+        console.log('visitBreak')
         throw new BreaKException();        
     }
     
@@ -560,12 +594,11 @@ export class InterpreteVisitor extends BaseVisitor {
  * @type{BaseVisitor['visitContinue']}
  */
     visitContinue(node) {        
-        console.log('Continueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee')
+        console.log('visitContinue')
         if (this.prevContinue) {
             console.log('Continuing in', this.prevContinue)
             this.prevContinue.accept(this);           
         }
-
         throw new ContinueException();
     }
     
@@ -580,25 +613,18 @@ export class InterpreteVisitor extends BaseVisitor {
             value = node.value.accept(this); 
             console.log('Value in Visit Return', value)
         }
-        console.log('RETUUUUUURN;')
+        console.log('returning;')
         throw new ReturnException(value);        
     }
 /**
  * @type{BaseVisitor['visitLlamada']}
  */
     visitLlamada(node){ 
-        console.log('Llamada')
-        console.log('node')
-        console.log(node)
-        console.log("Variables Envior")
-        console.log(this.environment.variables)
         console.log('')
         const function1 = node.callee.accept(this).value;
         console.log('Function1 ', function1)
         console.log('node.args', node.args)
         const args = node.args.map(arg => arg.accept(this));
-        console.log('args')
-        console.log(args)
         if (!(function1 instanceof Invocable)) {
             throw new Error('No es invocable aaaa')
             
@@ -612,7 +638,6 @@ export class InterpreteVisitor extends BaseVisitor {
         return function1.invocar(this,args);
 
     }
-
  
 /**
  *  

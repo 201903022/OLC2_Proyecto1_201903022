@@ -575,6 +575,47 @@ export class Return extends Expresion {
     }
 }
     
+export class Switch extends Expresion {
+
+    /**
+    * @param {Object} options
+    * @param {Expresion} options.exp Expresion a evaluar
+ * @param {Expresion[]} options.cases Casos del switch
+ * @param {Expresion || undefined} options.defaultS Caso por defecto
+    */
+    constructor({ exp, cases, defaultS }) {
+        super();
+        
+        /**
+         * Expresion a evaluar
+         * @type {Expresion}
+        */
+        this.exp = exp;
+
+
+        /**
+         * Casos del switch
+         * @type {Expresion[]}
+        */
+        this.cases = cases;
+
+
+        /**
+         * Caso por defecto
+         * @type {Expresion || undefined}
+        */
+        this.defaultS = defaultS;
+
+    }
+
+    /**
+     * @param {BaseVisitor} visitor
+     */
+    accept(visitor) {
+        return visitor.visitSwitch(this);
+    }
+}
+    
 export class For extends Expresion {
 
     /**
@@ -706,4 +747,4 @@ export class DclFunc extends Expresion {
     }
 }
     
-export default { Expresion, Primitive, OperacionBinaria, OpLogica, OperacionUnaria, Agrupacion, Numero, DeclaracionVariable, ReferenciaVariable, Print, Sout, ExpresionStmt, Asignacion, Bloque, If, While, Break, Continue, Return, For, Llamada, DclFunc }
+export default { Expresion, Primitive, OperacionBinaria, OpLogica, OperacionUnaria, Agrupacion, Numero, DeclaracionVariable, ReferenciaVariable, Print, Sout, ExpresionStmt, Asignacion, Bloque, If, While, Break, Continue, Return, Switch, For, Llamada, DclFunc }

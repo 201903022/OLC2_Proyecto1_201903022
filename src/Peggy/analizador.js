@@ -386,7 +386,6 @@ function peg$parse(input, options) {
   };
   var peg$f49 = function(callee, args) { return args };
   var peg$f50 = function(callee, params) {
-  console.log("LLAMADA PEGGGYYYY");
   return params.reduce(
     (callee, args) => {
       return crearNodo('llamada', { callee, args: args || [] })
@@ -401,8 +400,8 @@ function peg$parse(input, options) {
   var peg$f54 = function() {return crearNodo('primitive', { typeD:'int', value:Number(text(),0)  }) };
   var peg$f55 = function() {return crearNodo('primitive', { typeD:'string', value:text().slice(1,-1) }) };
   var peg$f56 = function() {return crearNodo('primitive', { typeD:'char', value:text().slice(1,-1) }) };
-  var peg$f57 = function() {return crearNodo('primitive', { typeD:'bool', value:'true'  }) };
-  var peg$f58 = function() {return crearNodo('primitive', { typeD:'bool', value:'false'  }) };
+  var peg$f57 = function() {return crearNodo('primitive', { typeD:'bool', value:true  }) };
+  var peg$f58 = function() {return crearNodo('primitive', { typeD:'bool', value:false  }) };
   var peg$f59 = function() {return crearNodo('primitive', { typeD:'null', value:null  }) };
   var peg$f60 = function(exp) { return crearNodo('agrupacion', { exp }) };
   var peg$f61 = function(id) {  return crearNodo('referenciaVariable', { id }) };

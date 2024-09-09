@@ -16,19 +16,14 @@ export class Environment{
      */
     setVariable(name,value,locationStart){
         console.log('Setting variable: ', name)
-        console.log('Value: ', value)
-
         const CurrentValue = this.variables[name];
         if (CurrentValue) {
-            //null
             if (CurrentValue.type === 'null') {
                 this.variables[name] = value;
                 return;                
             }
-
             if (value.type ==='null') {
                 this.variables[name] = value;
-                //errStr 
                 console.log('locationStart')
                 console.log(locationStart)
                 const errStr = `Type mismatch ${CurrentValue.type} != ${value.type} in "${name}"   ${value.value} is not ${CurrentValue.type} `
@@ -77,8 +72,6 @@ export class Environment{
         }
         const errToSave = new ErrorClass(ErrorCounts,`Variabel "${name}" aint defined`, value.location.start.line,value.location.start.column, "sintactico")
         console.log('Type mismatch')
-        console.log(errToSave)
-        console.log(value.location)
         ErrorsArr.push(errToSave)
         return (new Dato('null',null,null,null))
     }
@@ -117,10 +110,7 @@ export class Environment{
             //check types 
             if (typeD === value.type) {
                 let datoToSave = new Dato(typeD,value.value,value.location)
-                console.log('curren env: ')
-                console.log('Both are the same type ')
                 this.variables[name] = datoToSave;
-                console.log(this.variables)
                 return;                
             }
             else{ 

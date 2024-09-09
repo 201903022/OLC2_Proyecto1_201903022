@@ -77,6 +77,9 @@ Stmt = "print(" _ exp:Expresion _ ")" _ ";" { return crearNodo('print', { exp })
      {
        return crearNodo('for', { init, cond, inc, stmt }) 
     }    
+  //  /"default"  _ ":" _ stmt:Stmt {return crearNodo('default',{ exp } ) }
+  //  /cases 
+    // /"switch" _ "(" _ exp:Expresion _ ")" _ "{" _ cases:MultipleCases _ def:(_ defaultE:DefaultExp  ) ? _ "}" {return crearNodo('switch',{exp,cases})}
     / "break" _ ";" {  console.log('breakPaa');
     return crearNodo('break') }
     / "continue" _ ";" { return crearNodo('continue') }
@@ -87,12 +90,14 @@ FortBegining = dcl:VarDcl {return dcl}
             / exp:Expresion _ ";" {return exp}
             /";" {return null }
 
-
-
-
-
 Bloque = "{" _ dcls:Declaracion* _ "}" { return crearNodo('bloque', { dcls }) }
-
+/*
+MultipleCases  = "case" _ exp:Expresion _":" stm:Stmt cases:("case" _ exp1:Expresion _ ":" stm1:Stmt
+  { return {exp:exp1,stmt:stm1} })* { return [ {exp,stmt:stm}, ...cases] }
+DefaultExp = "default" _ ":" stmt:Stmt{ 
+  return crearNodo('default',{stmt}) 
+}
+*/
 
 Identificador = [a-zA-Z][a-zA-Z0-9]* { return text() }
 
@@ -179,7 +184,6 @@ Unarytypes = "-" {
 
 
 Llamada = callee:Numero _ params:("(" args:Argumentos? ")" { return args })* {
-  console.log("LLAMADA PEGGGYYYY");
   return params.reduce(
     (callee, args) => {
       return crearNodo('llamada', { callee, args: args || [] })
@@ -195,8 +199,8 @@ Numero = [0-9]+( "." [0-9]+ )+ {return crearNodo('primitive', { typeD:'float', v
   / [0-9]+ {return crearNodo('primitive', { typeD:'int', value:Number(text(),0)  }) }
   / '"' [^\"]* '"' {return crearNodo('primitive', { typeD:'string', value:text().slice(1,-1) }) }
   / "'" [^\']* "'" {return crearNodo('primitive', { typeD:'char', value:text().slice(1,-1) }) }
-  / "true"   {return crearNodo('primitive', { typeD:'bool', value:'true'  }) }
-  / "false" {return crearNodo('primitive', { typeD:'bool', value:'false'  }) }
+  / "true"   {return crearNodo('primitive', { typeD:'bool', value:true  }) }
+  / "false" {return crearNodo('primitive', { typeD:'bool', value:false  }) }
   / "null" {return crearNodo('primitive', { typeD:'null', value:null  }) }
   / "(" _ exp:Expresion _ ")" { return crearNodo('agrupacion', { exp }) }
   / id:Identificador {  return crearNodo('referenciaVariable', { id }) }

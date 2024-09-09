@@ -1,0 +1,51 @@
+// ------------------------------------------------------------
+System.out.println("********** While **********");
+
+
+System.out.println("1. While simple");
+
+int i = 0;
+while (i < 5) {
+    System.out.println(i);
+    i = i + 1;
+}
+
+System.out.println("");
+
+System.out.println("2. While anidado");
+
+int n = 5;
+int x = 0;
+
+while (x < n) {
+    int j = 0;
+    string spaces = "";    
+    while (j < n) {
+        if (x == j || x + j == n - 1) {
+            spaces = spaces + "*";
+        } else {
+            spaces = spaces + " ";
+        }
+        j = j + 1;
+    }
+    System.out.println(spaces);
+    x = x + 1;
+}
+
+System.out.println("");
+
+
+System.out.println("********** Break **********");
+
+System.out.println("1. Break en while");
+
+int cs = 0;
+
+while (true) {
+    System.out.println(cs);
+    cs = cs + 1;
+    
+    if (cs == 5) {
+        break;
+    }
+}

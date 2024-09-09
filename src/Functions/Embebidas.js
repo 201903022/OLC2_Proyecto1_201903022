@@ -16,20 +16,12 @@ class NativeFunction extends Invocable{
 //toUpperCase
 //typeOf
 
-function parseIntFunction(valor) {
-    console.log('parseIntFucntion');
-    console.log(valor);
-    
-}
-
 export const embebidas = {
     'time': new NativeFunction(() => 0, () => { 
         console.log('HolaMundo TIMEEEEEEEEE')
         return new Dato('string', '04/09/2024',null)
     }),
     'parseint': new NativeFunction(() => 1,(a,b) => { 
-
-
         const value = Math.floor(parseFloat(b[0].value))
         if (isNaN(value)) {
             const errStr = `Cant to parseint ->  ${b[0].value} `
