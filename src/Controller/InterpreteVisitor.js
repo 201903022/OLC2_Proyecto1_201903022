@@ -546,39 +546,48 @@ export class InterpreteVisitor extends BaseVisitor {
  */
  visitSwitch(node){ 
     console.log('Visit Switch '); 
-    console.log(node);
-    console.log('node.exp')
-    console.log(node.exp);
-    console.log('node.cases')
-    console.log(node.cases)
-    console.log('node.default')
-    console.log(node.default);
-    
-    
-    /*
     const startingEnv = this.environment;
-    const value = node.value.accept(this);
     let isMatch = false;
-    let defaultStmt = null;
-    for (const caseNode of node.cases) {
-        if (caseNode.isDefault) {
-            defaultStmt = caseNode.stmt;
-            continue;
+    const value = node.exp.accept(this);
+    console.log('Value in switch', value.value)   
+    try {
+        console.log('aaaa')
+        for (const caseNode of node.cases) {
+            console.log('CaseNode')
+            const caseExp = caseNode.exp.accept(this)
+            console.log(caseExp.value)
+            console.log('----------------')
+            if (caseExp.value === value.value) {
+                isMatch = true;
+                console.log(`${caseExp.value} === ${value.value}`)
+                console.log('Aceptar: ---> ')
+                console.log(caseNode.stmt)
+            }
+            if (isMatch) {
+                console.log('Is match')
+                console.log(caseNode)
+                caseNode.stmt.forEach(
+                    stmt => stmt.accept(this)
+                )
+            }            
         }
-        const caseValue = caseNode.value.accept(this);
-        if (caseValue.value === value.value) {
-            isMatch = true;
+        if (!isMatch && node.defaultS) {
+            console.log('Default')
+            defaultStmt = node.defaultS.forEach(
+                stmt => stmt.accept(this)
+            );
         }
-        if (isMatch) {
-            caseNode.stmt.accept(this);
-            break;
+    } catch (error) {
+        this.environment = startingEnv;
+        if (error instanceof BreaKException) {
+            console.log('BreakExpetion')
+            return;                            
         }
+        if (error instanceof ContinueException) {
+            return this.visitSwitch(node);                            
+        }                
+        
     }
-    if (!isMatch && defaultStmt) {
-        defaultStmt.accept(this);
-    }
-    this.environment = startingEnv;
-    */
 
  }
 

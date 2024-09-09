@@ -18,6 +18,7 @@
       'if': nodos.If,
       'while': nodos.While,
       'for': nodos.For,      
+      'switch': nodos.Switch,
       'break': nodos.Break,
       'continue': nodos.Continue,
       'return': nodos.Return,
@@ -67,6 +68,9 @@ TypesValues = "int" { return "int"}
 
 Stmt = "print(" _ exp:Expresion _ ")" _ ";" { return crearNodo('print', { exp }) }
     /"system.out.println(" _ exp:PrintComa _ ")" _ ";" { return crearNodo('sout', { exp }) }
+    /"switch" _ "(" _ exp:Expresion _ ")" _ "{" _ cases:MultipleCases _ smtDef:(_ defaultE:DefaultExp{return defaultE}  ) ? _ "}" {
+      console.log('Switch ', exp,cases);
+      return crearNodo('switch',{exp,cases,defaultS:smtDef})}
     / bl:Bloque {return bl}
     / "if" _ "(" _ cond:Expresion _ ")" _ stmtTrue:Stmt 
       stmtFalse:(
@@ -77,9 +81,6 @@ Stmt = "print(" _ exp:Expresion _ ")" _ ";" { return crearNodo('print', { exp })
      {
        return crearNodo('for', { init, cond, inc, stmt }) 
     }    
-  //  /"default"  _ ":" _ stmt:Stmt {return crearNodo('default',{ exp } ) }
-  //  /cases 
-    // /"switch" _ "(" _ exp:Expresion _ ")" _ "{" _ cases:MultipleCases _ def:(_ defaultE:DefaultExp  ) ? _ "}" {return crearNodo('switch',{exp,cases})}
     / "break" _ ";" {  console.log('breakPaa');
     return crearNodo('break') }
     / "continue" _ ";" { return crearNodo('continue') }
@@ -91,13 +92,13 @@ FortBegining = dcl:VarDcl {return dcl}
             /";" {return null }
 
 Bloque = "{" _ dcls:Declaracion* _ "}" { return crearNodo('bloque', { dcls }) }
-/*
-MultipleCases  = "case" _ exp:Expresion _":" stm:Stmt cases:("case" _ exp1:Expresion _ ":" stm1:Stmt
-  { return {exp:exp1,stmt:stm1} })* { return [ {exp,stmt:stm}, ...cases] }
-DefaultExp = "default" _ ":" stmt:Stmt{ 
-  return crearNodo('default',{stmt}) 
+
+MultipleCases  = "case" _ exp:Expresion _":" _ stm:Declaracion* _ cases:(_ "case" _ exp1:Expresion _ ":" _ stm1:Declaracion* 
+  { return {exp:exp1,stmt:stm1} })* _  { return [ {exp,stmt:stm}, ...cases] }
+DefaultExp = "default" _ ":" _  stmt:Declaracion*{ 
+  return stmt
 }
-*/
+
 
 Identificador = [a-zA-Z][a-zA-Z0-9]* { return text() }
 
@@ -108,6 +109,8 @@ PrintComa = exp:Expresion _ params:("," _ exp1:Expresion
 
 Asignacion = id:Identificador _ "=" _ asgn:Asignacion { return crearNodo('asignacion', { id, asgn }) }
           / Logical
+
+
 
 // asignTypes = "+=" "-=" "="
 //logical: "&&" "||"

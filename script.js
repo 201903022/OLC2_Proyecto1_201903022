@@ -5,7 +5,7 @@ let errorTable, symbolTable, OakdEditor, consoleResult, dotStringCst = "";
 /*Scrips Code Mirror */
 $(document).ready(function () {
     OakdEditor = editor('editor');
-    consoleResult = editor('console', 'text/x-rustsrc', true, true, false, true);
+    consoleResult = editor('console', 'text/x-java', true, true, false, true);
 });
 
 function editor(id, language, lineNumbers = true, readOnly = false, styleActiveLine = true,  lineWrapping = true) {
