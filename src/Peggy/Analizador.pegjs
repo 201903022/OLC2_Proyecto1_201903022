@@ -24,8 +24,8 @@
       'return': nodos.Return,
       'llamada': nodos.Llamada,
       'DclFunc':nodos.DclFunc,
-      'ternario':nodos.tern
-    
+      'ternario':nodos.tern, 
+      'DclStruct':nodos.DclStruct, 
     
     }
 
@@ -36,9 +36,9 @@
 }
 
 programa = _ dcl:Declaracion* _ { return dcl }
-
-Declaracion = dcl:VarDcl _ { return dcl }
-            / dcl:DclFunc _ { return dcl}
+Declaracion =  dcl:DclStruct _ { return dcl }
+            /  dcl:VarDcl _ { return dcl }
+            / dcl:DclFunc  _ { return dcl}
             / stmt:Stmt _ { return stmt }
 
 //VarDcl = tipo:TypesValues _ id:Identificador _ "=" _ exp:Expresion _ ";" { return crearNodo('declaracionVariable', { id:id, exp:exp,typeD:tipo }) }
@@ -48,6 +48,13 @@ DclFunc = tipo:TypesValues _  id:Identificador "(" _ params:Parametros? _ ")" _ 
   console.log('DclFunc')
   return crearNodo('DclFunc',{ type:tipo,id,params:params || [],bloque})
 }
+DclStruct = "struct" _ id:Identificador _ "{" _ bodyC:DcslsStruct* _ "}"{ 
+  console.log('DeclClass : ', id , ' body: ', bodyC)
+  return crearNodo('DclStruct',{ id,properties:bodyC })
+}
+
+DcslsStruct = dcl:VarDcl _ {return dcl}
+          /dcl:DclFunc _ {return dcl}
 
 //Parametros = id:Identificador _ params:("," ids:Identificador{return ids})* { return [id, ...params] }
 Parametros = tipo:TypesValues _ id:Identificador _ params:(","_ tipo1:TypesValues _ ids:Identificador{ 
@@ -65,6 +72,7 @@ TypesValues = "int" { return "int"}
           /"bool"{ return "bool"}
           /"var" {return "var"}
           /"void"{ return "void"}
+          /id:Identificador{return id}
 
 
 
@@ -102,7 +110,7 @@ DefaultExp = "default" _ ":" _  stmt:Declaracion*{
 }
 
 
-Identificador = [a-zA-Z][a-zA-Z0-9]* { return text() }
+Identificador = !ReseveredWords [a-zA-Z][a-zA-Z0-9]* { return text() }
 
 Expresion = Asignacion
 
@@ -220,3 +228,27 @@ _ = ([ \t\n\r] / Comments)*
 
 Comments = "//" (![\n] .)*
             / "/*" (!("*/") .)* "*/"
+
+ReseveredWords = ("int"
+  /"if"
+  /"else"
+  /"while"
+  /"for"
+  /"switch"
+  /"case"
+  /"default"
+  /"break"
+  /"continue"
+  /"return"
+  /"print"
+  /"system.out.println"
+  /"struct"
+  /"void"
+  /"char"
+  /"float"
+  /"string"
+
+)      { 
+  return text() 
+}
+

@@ -72,6 +72,12 @@
 
  * @typedef {import('./nodos').tern} tern
 
+
+ * @typedef {import('./nodos').DclStruct} DclStruct
+
+
+ * @typedef {import('./nodos').instClass} instClass
+
  */
 
 
@@ -295,6 +301,24 @@ export class BaseVisitor {
      */
     visittern(node) {
         throw new Error('Metodo visittern no implementado');
+    }
+    
+
+    /**
+     * @param {DclStruct} node
+     * @returns {any}
+     */
+    visitDclStruct(node) {
+        throw new Error('Metodo visitDclStruct no implementado');
+    }
+    
+
+    /**
+     * @param {instClass} node
+     * @returns {any}
+     */
+    visitinstClass(node) {
+        throw new Error('Metodo visitinstClass no implementado');
     }
     
 }

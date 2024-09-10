@@ -79,6 +79,9 @@ export class InterpreteVisitor extends BaseVisitor {
     visitOperacionBinaria(node) {
         console.log('**************************')
         console.log('Operacion Binaria')
+        console.log(node)
+        console.log('**************************')
+        
         const left = node.izq.accept(this); 
         const right = node.der.accept(this); 
         if (left.type ==='null' || right.type === 'null') {
@@ -596,19 +599,12 @@ export class InterpreteVisitor extends BaseVisitor {
     try {
         console.log('aaaa')
         for (const caseNode of node.cases) {
-            console.log('CaseNode')
             const caseExp = caseNode.exp.accept(this)
-            console.log(caseExp.value)
-            console.log('----------------')
             if (caseExp.value === value.value) {
                 isMatch = true;
-                console.log(`${caseExp.value} === ${value.value}`)
-                console.log('Aceptar: ---> ')
-                console.log(caseNode.stmt)
             }
             if (isMatch) {
                 console.log('Is match')
-                console.log(caseNode)
                 caseNode.stmt.forEach(
                     stmt => stmt.accept(this)
                 )
@@ -711,7 +707,8 @@ export class InterpreteVisitor extends BaseVisitor {
  * @type{BaseVisitor['visittern']}
  *  
  */ 
-    visittern(node){ 
+  
+   visittern(node){ 
         console.log('Visit Tern')
         console.log(node)
         const cond = node.cond.accept(this); 
@@ -721,5 +718,40 @@ export class InterpreteVisitor extends BaseVisitor {
             return node.stmtFalse.accept(this);
         }
     }
+   /**
+ *  
+ * @type{BaseVisitor['visitDclStruct']}
+ *  
+ */ 
+  
+    visitDclStruct(node){ 
+        console.log('Visit DclStruct')
+        console.log(node)
+        console.log('\t Struct ID: ', node.id)
+        console.log('\t Struct dcls: ', node.properties)
+        const propertiesClass = {};
+        const methodsClass = {};
+        node.properties.forEach(property => {
+            console.log('\tProperty : ',property)
+            if (property instanceof nodos.DeclaracionVariable) {
+                console.log('\t -> Property is a variable');
+                const value = new Dato(property.typeD,property.exp,property.location);
+                propertiesClass[property.id] = value;
+                console.log('\t --> Value ',value)
+
+            } else if (property instanceof nodos.DclFunc) {
+                console.log('\t -> Property is a function')
+                const closure = this.environment;
+                const func = new ForeignFunction(property,closure);
+                methodsClass[property.id] = func;
+                console.log('\t --> Value ',func)
+
+                
+            }
+           
+        })
+
+    }
+
 
 }

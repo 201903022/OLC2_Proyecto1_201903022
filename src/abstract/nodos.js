@@ -796,4 +796,70 @@ export class tern extends Expresion {
     }
 }
     
-export default { Expresion, Primitive, OperacionBinaria, OpLogica, OperacionUnaria, Agrupacion, Numero, DeclaracionVariable, ReferenciaVariable, Print, Sout, ExpresionStmt, Asignacion, Bloque, If, While, Break, Continue, Return, Switch, For, Llamada, DclFunc, tern }
+export class DclStruct extends Expresion {
+
+    /**
+    * @param {Object} options
+    * @param {string} options.id Identificador de la clase
+ * @param {Expresion[]} options.properties Declaraciones de la clase
+    */
+    constructor({ id, properties }) {
+        super();
+        
+        /**
+         * Identificador de la clase
+         * @type {string}
+        */
+        this.id = id;
+
+
+        /**
+         * Declaraciones de la clase
+         * @type {Expresion[]}
+        */
+        this.properties = properties;
+
+    }
+
+    /**
+     * @param {BaseVisitor} visitor
+     */
+    accept(visitor) {
+        return visitor.visitDclStruct(this);
+    }
+}
+    
+export class instClass extends Expresion {
+
+    /**
+    * @param {Object} options
+    * @param {string} options.id Identificador de la clase
+ * @param {Expresion[]} options.args Argumentos de la clase
+    */
+    constructor({ id, args }) {
+        super();
+        
+        /**
+         * Identificador de la clase
+         * @type {string}
+        */
+        this.id = id;
+
+
+        /**
+         * Argumentos de la clase
+         * @type {Expresion[]}
+        */
+        this.args = args;
+
+    }
+
+    /**
+     * @param {BaseVisitor} visitor
+     */
+    accept(visitor) {
+        return visitor.visitinstClass(this);
+    }
+}
+    
+export default { Expresion, Primitive, OperacionBinaria, OpLogica, OperacionUnaria, Agrupacion, Numero, DeclaracionVariable, ReferenciaVariable, Print, Sout, ExpresionStmt, Asignacion, Bloque, If, While, Break, Continue, Return, Switch, For, Llamada, DclFunc, tern, DclStruct, instClass }
