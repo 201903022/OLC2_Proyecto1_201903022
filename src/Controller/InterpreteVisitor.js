@@ -389,6 +389,7 @@ export class InterpreteVisitor extends BaseVisitor {
  * @type{BaseVisitor['visitReferenciaVariable']}
  */
     visitReferenciaVariable(node) {
+        
         const varName = node.id;
         const value = this.environment.getVariable(varName,node);
         return value;
@@ -454,9 +455,51 @@ export class InterpreteVisitor extends BaseVisitor {
  */
     visitAsignacion(node) {        
         console.log("visitAsignacion ")
-        const varName = node.id; 
-        const value = node.asgn.accept(this);
-        this.environment.setVariable(varName,value,node.location.start);
+        console.log(node.op)
+        switch (node.op) {
+            case '=':
+                const varName = node.id; 
+                const value = node.asgn.accept(this);
+                this.environment.setVariable(varName,value,node.location.start);                
+                console.log('aaa')
+                break;
+            case '+=': 
+                const varName2 = node.id; 
+                const refVar = new nodos.ReferenciaVariable(
+                    {id:node.id}
+
+                )
+                const exp2 = new nodos.OperacionBinaria( 
+                    {izq:refVar,
+                    op:'+',
+                    der:node.asgn}
+                )
+                console.log('exp2')
+                console.log(exp2)
+                const newValue = exp2.accept(this);
+                console.log('newValue')
+                console.log(newValue)
+                this.environment.setVariable(varName2,newValue,node.location.start);  
+                break;
+            case '-=': 
+                const varName3 = node.id;
+                const refVar3 = new nodos.ReferenciaVariable(
+                    {id:node.id}
+                )
+                const exp3 = new nodos.OperacionBinaria( 
+                    {izq:refVar3,
+                    op:'-',
+                    der:node.asgn}
+                )
+                const newValue3 = exp3.accept(this);
+                this.environment.setVariable(varName3,newValue3,node.location.start);     
+                break;           
+            
+            default:
+                console.log('first')
+                break;
+        }
+
     }
     
 /**
@@ -662,6 +705,21 @@ export class InterpreteVisitor extends BaseVisitor {
         }
         const func = new ForeignFunction(node,closure);
         this.environment.assignVariable(node.id,func,'function')
-    }    
+    }   
+   /**
+ *  
+ * @type{BaseVisitor['visittern']}
+ *  
+ */ 
+    visittern(node){ 
+        console.log('Visit Tern')
+        console.log(node)
+        const cond = node.cond.accept(this); 
+        if (cond.value) {
+            return node.stmtTrue.accept(this);
+        }else{ 
+            return node.stmtFalse.accept(this);
+        }
+    }
 
 }

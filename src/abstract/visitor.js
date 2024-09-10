@@ -69,6 +69,9 @@
 
  * @typedef {import('./nodos').DclFunc} DclFunc
 
+
+ * @typedef {import('./nodos').tern} tern
+
  */
 
 
@@ -283,6 +286,15 @@ export class BaseVisitor {
      */
     visitDclFunc(node) {
         throw new Error('Metodo visitDclFunc no implementado');
+    }
+    
+
+    /**
+     * @param {tern} node
+     * @returns {any}
+     */
+    visittern(node) {
+        throw new Error('Metodo visittern no implementado');
     }
     
 }

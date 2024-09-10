@@ -23,7 +23,9 @@
       'continue': nodos.Continue,
       'return': nodos.Return,
       'llamada': nodos.Llamada,
-      'DclFunc':nodos.DclFunc
+      'DclFunc':nodos.DclFunc,
+      'ternario':nodos.tern
+    
     
     }
 
@@ -104,16 +106,22 @@ Identificador = [a-zA-Z][a-zA-Z0-9]* { return text() }
 
 Expresion = Asignacion
 
+
+
 PrintComa = exp:Expresion _ params:("," _ exp1:Expresion 
   { return exp1 })* { return [exp, ...params] }
 
-Asignacion = id:Identificador _ "=" _ asgn:Asignacion { return crearNodo('asignacion', { id, asgn }) }
+Asignacion = id:Identificador _ tipoA:asignTypes _ asgn:Asignacion { return crearNodo('asignacion', { id, asgn,op:tipoA }) }
+          /Ternario
           / Logical
 
+asignTypes = ("="/"+="/"-="/"*="/"/=") {return text()}
 
+Ternario = cond:Logical _ "?" _ stmtTrue:Expresion _ ":" _ stmtFalse:Expresion _  { 
+ // console.log('Ternario', cond, stmtTrue, stmtFalse);
+  return crearNodo('ternario', { cond, stmtTrue, stmtFalse }) 
+}
 
-// asignTypes = "+=" "-=" "="
-//logical: "&&" "||"
 Logical = izq:Equality expansion:( 
   _ op:("&&" / "||") _ der:Equality { return { tipo: op, der } }
 )* { 

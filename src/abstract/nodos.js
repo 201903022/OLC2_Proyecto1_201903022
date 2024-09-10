@@ -386,8 +386,9 @@ export class Asignacion extends Expresion {
     * @param {Object} options
     * @param {string} options.id Identificador de la variable
  * @param {Expresion} options.asgn Expresion a asignar
+ * @param {string} options.op tipo de dato string,int...
     */
-    constructor({ id, asgn }) {
+    constructor({ id, asgn, op }) {
         super();
         
         /**
@@ -402,6 +403,13 @@ export class Asignacion extends Expresion {
          * @type {Expresion}
         */
         this.asgn = asgn;
+
+
+        /**
+         * tipo de dato string,int...
+         * @type {string}
+        */
+        this.op = op;
 
     }
 
@@ -747,4 +755,45 @@ export class DclFunc extends Expresion {
     }
 }
     
-export default { Expresion, Primitive, OperacionBinaria, OpLogica, OperacionUnaria, Agrupacion, Numero, DeclaracionVariable, ReferenciaVariable, Print, Sout, ExpresionStmt, Asignacion, Bloque, If, While, Break, Continue, Return, Switch, For, Llamada, DclFunc }
+export class tern extends Expresion {
+
+    /**
+    * @param {Object} options
+    * @param {Expresion} options.cond Condicion del ternario
+ * @param {Expresion} options.stmtTrue Cuerpo del ternario
+ * @param {Expresion} options.stmtFalse Cuerpo del ternario
+    */
+    constructor({ cond, stmtTrue, stmtFalse }) {
+        super();
+        
+        /**
+         * Condicion del ternario
+         * @type {Expresion}
+        */
+        this.cond = cond;
+
+
+        /**
+         * Cuerpo del ternario
+         * @type {Expresion}
+        */
+        this.stmtTrue = stmtTrue;
+
+
+        /**
+         * Cuerpo del ternario
+         * @type {Expresion}
+        */
+        this.stmtFalse = stmtFalse;
+
+    }
+
+    /**
+     * @param {BaseVisitor} visitor
+     */
+    accept(visitor) {
+        return visitor.visittern(this);
+    }
+}
+    
+export default { Expresion, Primitive, OperacionBinaria, OpLogica, OperacionUnaria, Agrupacion, Numero, DeclaracionVariable, ReferenciaVariable, Print, Sout, ExpresionStmt, Asignacion, Bloque, If, While, Break, Continue, Return, Switch, For, Llamada, DclFunc, tern }
