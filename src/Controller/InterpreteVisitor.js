@@ -7,6 +7,7 @@ import {embebidas} from '../Functions/Embebidas.js'
 import {Invocable} from '../Functions/Invocable.js'
 import {ErrorClass,ErrorsArr,ErrorCounts} from '../Tables/Errors.js'
 import { ForeignFunction } from '../Functions/Foreing.js';
+import { StructIn } from '../Strucutures/StructsIn.js';
 export class InterpreteVisitor extends BaseVisitor {
     
     constructor() {
@@ -81,7 +82,7 @@ export class InterpreteVisitor extends BaseVisitor {
         console.log('Operacion Binaria')
         console.log(node)
         console.log('**************************')
-        
+
         const left = node.izq.accept(this); 
         const right = node.der.accept(this); 
         if (left.type ==='null' || right.type === 'null') {
@@ -131,7 +132,12 @@ export class InterpreteVisitor extends BaseVisitor {
                    // suma = parseFloat(suma)
                     return (new Dato(typeD,suma,node.location));                    
                 }else{ 
-                    throw new Error(`Operator is no supported ${node.op} cant add ${left.type} + ${right.type}`);
+                    const errStr = `Cant operate + ${left.type} and ${right.type} `
+                    const line = node.location.start.line
+                    const column = node.location.start.column;
+                    const errToSave = new ErrorClass(ErrorCounts,errStr,line,column,"semantico");
+                    ErrorsArr.push(errToSave) ;    
+                    return new Dato('null',null,node.location);    
                 }                
             case '-':
                 if (left.type === 'string' || right.type === 'string') {
@@ -463,6 +469,8 @@ export class InterpreteVisitor extends BaseVisitor {
             case '=':
                 const varName = node.id; 
                 const value = node.asgn.accept(this);
+                console.log(`Asignando: ${varName}`)
+                console.log(`Valor : ${value}`)
                 this.environment.setVariable(varName,value,node.location.start);                
                 console.log('aaa')
                 break;
@@ -496,7 +504,17 @@ export class InterpreteVisitor extends BaseVisitor {
                 )
                 const newValue3 = exp3.accept(this);
                 this.environment.setVariable(varName3,newValue3,node.location.start);     
-                break;           
+                break;  
+            case ':':          
+                    console.log("Asignaciones con 2 puntos: ")
+                    console.log(node.id)
+                    console.log(node.asgn)
+                    const varName4 = node.id; 
+                    const value4 = node.asgn.accept(this);
+                    this.environment.setVariable(varName4,value4,node.location.start);                
+                    console.log('aaa')                    
+
+                    break;  
             
             default:
                 console.log('first')
@@ -668,7 +686,7 @@ export class InterpreteVisitor extends BaseVisitor {
  * @type{BaseVisitor['visitLlamada']}
  */
     visitLlamada(node){ 
-        console.log('')
+        console.log('Visti llamada: ',node.callee)
         const function1 = node.callee.accept(this).value;
         console.log('Function1 ', function1)
         console.log('node.args', node.args)
@@ -681,8 +699,9 @@ export class InterpreteVisitor extends BaseVisitor {
         if (function1.aridad() !== args.length) {
             throw new Error('No es la misma aridad')            
         }
-        console.log('Function 1 again: ',function1)
-        console.log('this.args.value, ',args)
+       // console.log('Function 1 again: ',function1)
+       // console.log('this.args.value, ',args)
+       
         return function1.invocar(this,args);
 
     }
@@ -725,33 +744,70 @@ export class InterpreteVisitor extends BaseVisitor {
  */ 
   
     visitDclStruct(node){ 
-        console.log('Visit DclStruct')
-        console.log(node)
-        console.log('\t Struct ID: ', node.id)
-        console.log('\t Struct dcls: ', node.properties)
+       // console.log('Visit DclStruct')
+       // console.log(node)
+       // console.log('\t Struct ID: ', node.id)
+       // console.log('\t Struct dcls: ', node.properties)
         const propertiesClass = {};
         const methodsClass = {};
         node.properties.forEach(property => {
-            console.log('\tProperty : ',property)
+           // console.log('\tProperty : ',property)
             if (property instanceof nodos.DeclaracionVariable) {
-                console.log('\t -> Property is a variable');
+              //  console.log('\t -> Property is a variable');
                 const value = new Dato(property.typeD,property.exp,property.location);
                 propertiesClass[property.id] = value;
-                console.log('\t --> Value ',value)
+               // console.log('\t --> Value ',value)
 
             } else if (property instanceof nodos.DclFunc) {
-                console.log('\t -> Property is a function')
+               // console.log('\t -> Property is a function')
                 const closure = this.environment;
                 const func = new ForeignFunction(property,closure);
                 methodsClass[property.id] = func;
-                console.log('\t --> Value ',func)
+              //  console.log('\t --> Value ',func)
 
                 
             }
            
         })
 
+       // console.log('Properties Class')
+       // console.log(propertiesClass)
+       // console.log('Methods Class')
+       // console.log(methodsClass)
+
+        //create StructIn
+        const StructtoSave = new StructIn(node.id,propertiesClass,methodsClass);
+        const StrucToDato = new Dato(node.id,StructtoSave,node.location)
+        this.environment.assignVariable(
+            node.id,
+            StrucToDato,
+            node.id,
+            true
+        );
+       // console.log('Enviroment visitDclStruct')
+       // console.log(this.environment)
+
     }
+   /**
+ *  
+ * @type{BaseVisitor['visitinstClass']}
+ *  
+ */ 
+    visitinstClass(node) { 
+        console.log('Visit Instancia del struct: ', node.id)
+        const struct = this.environment.getVariable(node.id,node);
+        const args = node.args
+        console.log(`\t -----> Struct ${struct}`)
+        console.log(`\t -----> Args ${args}`)
+        if (struct.value instanceof StructIn) {
+            const a =  struct.value.invocar(this,args);
+            console.log(this.environment)
+            return new Dato(node.id,a,node.location);
+        }
+
+    }
+
+
 
 
 }

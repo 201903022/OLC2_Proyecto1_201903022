@@ -1,0 +1,16 @@
+System.out.println("********** Declaración Structs **********");
+
+struct Persona {
+    string nombre;
+    int edad;
+    float estatura;
+}
+
+System.out.println("Ok");
+System.out.println("");
+
+Persona persona1 = Persona{
+    nombre: "Juan",
+    edad: 25,
+    estatura: 1.75
+};

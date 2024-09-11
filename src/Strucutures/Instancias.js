@@ -1,23 +1,28 @@
-import {StructIn} from './StructsIn'
+import {StructIn} from './StructsIn.js'
 
 export class Instances { 
-    constructor(StructIn){ 
-        /**
-         * @type {StructIn}
-         */
-        this.StructIn = StructIn;
+
+    /**
+     *  @param {StructIn} Estructura
+     * 
+    */
+    constructor(Estructura){ 
+        this.StructSave = Estructura;
         this.properties = {};
     }
 
     set(name,value){ 
+        console.log(`Setting: ${name} -> ${value.value}`)
         this.properties[name] = value;
     }
 
     get(name){ 
         if(this.properties.hasOwnProperty(name)){ 
+            console.log('hasOwnProperty')
+            
             return this.properties[name];
         }
-        const method = this.StructIn.getMethdo(name);
+        const method = this.StructSave.getMethdo(name);
         if(method){ 
             return method;
         }

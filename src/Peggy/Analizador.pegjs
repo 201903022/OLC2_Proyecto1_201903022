@@ -26,6 +26,7 @@
       'DclFunc':nodos.DclFunc,
       'ternario':nodos.tern, 
       'DclStruct':nodos.DclStruct, 
+      'instClass':nodos.instClass,
     
     }
 
@@ -123,7 +124,7 @@ Asignacion = id:Identificador _ tipoA:asignTypes _ asgn:Asignacion { return crea
           /Ternario
           / Logical
 
-asignTypes = ("="/"+="/"-="/"*="/"/=") {return text()}
+asignTypes = ("="/"+="/"-="/"*="/"/=" /":") {return text()}
 
 Ternario = cond:Logical _ "?" _ stmtTrue:Expresion _ ":" _ stmtFalse:Expresion _  { 
  // console.log('Ternario', cond, stmtTrue, stmtFalse);
@@ -210,6 +211,7 @@ Llamada = callee:Numero _ params:("(" args:Argumentos? ")" { return args })* {
     callee
   )
 }
+/"."id:Identificador
 
 Argumentos = arg:Expresion _ args:("," _ exp:Expresion { 
   return exp })* { return [arg, ...args] }
@@ -222,7 +224,13 @@ Numero = [0-9]+( "." [0-9]+ )+ {return crearNodo('primitive', { typeD:'float', v
   / "false" {return crearNodo('primitive', { typeD:'bool', value:false  }) }
   / "null" {return crearNodo('primitive', { typeD:'null', value:null  }) }
   / "(" _ exp:Expresion _ ")" { return crearNodo('agrupacion', { exp }) }
+  / id:Identificador _ "{" _ argsI:Argumentos?  _ "}" _ ptcoma:(":")? { 
+    console.log('Instancia ', id, argsI)
+    return crearNodo('instClass',{ id,args:argsI }) 
+  
+  }
   / id:Identificador {  return crearNodo('referenciaVariable', { id }) }
+
 
 _ = ([ \t\n\r] / Comments)*
 

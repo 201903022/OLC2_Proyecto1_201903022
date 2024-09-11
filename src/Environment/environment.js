@@ -1,4 +1,6 @@
 import {Dato} from '../Clases/Dato.js'
+import { Instances } from '../Strucutures/Instancias.js';
+import { StructIn } from '../Strucutures/StructsIn.js';
 import {ErrorClass,ErrorsArr,ErrorCounts} from '../Tables/Errors.js'
 export class Environment{ 
     /**
@@ -39,6 +41,7 @@ export class Environment{
                 return;
             }else{ 
                 const errStr = `Type mismatch ${CurrentValue.type} != ${value.type} in "${name}"   ${value.value} is not ${CurrentValue.type} `
+                console.log(errStr)
                 const errToSave = new ErrorClass(ErrorCounts,errStr,1,1,"semantico")
                 ErrorsArr.push(errToSave)
                 console.log(errStr)
@@ -106,21 +109,63 @@ export class Environment{
                 this.variables[name] = datoToSave;
                 console.log(this.variables)
                 return;
-            }            
+            }         
+            
+            console.log('Valueeeeee ENvi " ',value)
             //check types 
             if (typeD === value.type) {
                 let datoToSave = new Dato(typeD,value.value,value.location)
                 this.variables[name] = datoToSave;
                 return;                
+            }else if (value instanceof Instances) {
+               // console.log('Is Structure')
+               // console.log('name')
+               // console.log(name)
+               // console.log('value')
+               // console.log(value)
+               // console.log('typeD')
+               // console.log(typeD)
+               // console.log('value.StructSave.name')
+               // console.log(value.StructSave.name)
+                if (typeD === value.StructSave.name) {
+                    console.log(`${typeD} === ${value.StructSave.name}`)
+                    console.log('Is Structure')
+                    console.log('Are the syme tipe of estructures')
+                    let datoToSave = new Dato(value.StructSave.name,value,null)
+                    this.variables[name] = datoToSave;
+                    return;
+                    
+                }else{ 
+                    console.log('Is Structure')
+                    console.log('Are not the same type of estructures')
+                    const errStr = `Type mismatch ${name} is ${typeD}`
+                   
+                    const datoToSave = new Dato(typeD,null,value.location);
+                    this.variables[name] = datoToSave;
+                    return 
+                }
             }
+
+            
             else{ 
+                console.log('name')
+                console.log(name)
+                console.log('value')
+                console.log(value)
+                console.log('typeD')
+                console.log(typeD)
+                console.log('value.type')
+                console.log(value.type)
+                console.log('value.value')
+                console.log(value.value)
+
                 const datoToSave = new Dato(typeD,null,value.location);
                 this.variables[name] = datoToSave;
                 const errStr = `Type mismatch ${name} is ${typeD}`
-                const errToSave = new ErrorClass(ErrorCounts,errStr, value.location.start.line,value.location.start.column, "sintactico")
+                const errToSave = new ErrorClass(ErrorCounts,errStr, 1,1, "sintactico")
                 console.log('Type mismatch')
                 console.log(errToSave)
-                console.log(value.location)
+                console.log(value)
                 ErrorsArr.push(errToSave)
                 return
             }
