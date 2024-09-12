@@ -14,3 +14,4 @@ Persona persona1 = Persona{
     edad: 25,
     estatura: 1.75
 };
+System.out.println(persona1.nombre);

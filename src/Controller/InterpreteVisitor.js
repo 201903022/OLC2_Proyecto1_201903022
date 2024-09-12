@@ -8,6 +8,7 @@ import {Invocable} from '../Functions/Invocable.js'
 import {ErrorClass,ErrorsArr,ErrorCounts} from '../Tables/Errors.js'
 import { ForeignFunction } from '../Functions/Foreing.js';
 import { StructIn } from '../Strucutures/StructsIn.js';
+import { Instances } from '../Strucutures/Instancias.js';
 export class InterpreteVisitor extends BaseVisitor {
     
     constructor() {
@@ -806,6 +807,49 @@ export class InterpreteVisitor extends BaseVisitor {
         }
 
     }
+
+   /**
+ *  
+ * @type{BaseVisitor['visitgetStruct']}
+ *  
+ */ 
+    visitgetStruct(node){ 
+        console.log(' Visit getStruct*********************************'); 
+        console.log(node)
+        console.log('node.id')
+        console.log(node.id)
+        const instance = node.id.accept(this);
+        console.log('Instance')
+        console.log(instance.value.properties.edad.value)
+        const property = node.propertie;
+        console.log('Property')
+        console.log(property)
+        return new Dato(
+            property,
+            instance.value.properties[property].value,
+            node.location
+        )
+        
+    }
+
+/**
+ *  
+ * @type{BaseVisitor['visitsetStruct']}
+ *  
+ */ 
+    visitsetStruct(node){ 
+        console.log('Visit setStruct')
+        console.log(node)
+        /*
+        const instance = node.id.accept(this);
+        const property = node.propertie;
+        const value = node.value.accept(this);
+        instance.value.properties[property] = value;
+        return instance;
+        */
+
+    }
+    
 
 
 

@@ -862,4 +862,78 @@ export class instClass extends Expresion {
     }
 }
     
-export default { Expresion, Primitive, OperacionBinaria, OpLogica, OperacionUnaria, Agrupacion, Numero, DeclaracionVariable, ReferenciaVariable, Print, Sout, ExpresionStmt, Asignacion, Bloque, If, While, Break, Continue, Return, Switch, For, Llamada, DclFunc, tern, DclStruct, instClass }
+export class getStruct extends Expresion {
+
+    /**
+    * @param {Object} options
+    * @param {string} options.id Identificador de la clase
+ * @param {string} options.propertie Propiedad de la clase
+    */
+    constructor({ id, propertie }) {
+        super();
+        
+        /**
+         * Identificador de la clase
+         * @type {string}
+        */
+        this.id = id;
+
+
+        /**
+         * Propiedad de la clase
+         * @type {string}
+        */
+        this.propertie = propertie;
+
+    }
+
+    /**
+     * @param {BaseVisitor} visitor
+     */
+    accept(visitor) {
+        return visitor.visitgetStruct(this);
+    }
+}
+    
+export class setStruct extends Expresion {
+
+    /**
+    * @param {Object} options
+    * @param {string} options.id Identificador de la clase
+ * @param {string} options.propertie Propiedad de la clase
+ * @param {Expresion} options.value Valor a asignar
+    */
+    constructor({ id, propertie, value }) {
+        super();
+        
+        /**
+         * Identificador de la clase
+         * @type {string}
+        */
+        this.id = id;
+
+
+        /**
+         * Propiedad de la clase
+         * @type {string}
+        */
+        this.propertie = propertie;
+
+
+        /**
+         * Valor a asignar
+         * @type {Expresion}
+        */
+        this.value = value;
+
+    }
+
+    /**
+     * @param {BaseVisitor} visitor
+     */
+    accept(visitor) {
+        return visitor.visitsetStruct(this);
+    }
+}
+    
+export default { Expresion, Primitive, OperacionBinaria, OpLogica, OperacionUnaria, Agrupacion, Numero, DeclaracionVariable, ReferenciaVariable, Print, Sout, ExpresionStmt, Asignacion, Bloque, If, While, Break, Continue, Return, Switch, For, Llamada, DclFunc, tern, DclStruct, instClass, getStruct, setStruct }

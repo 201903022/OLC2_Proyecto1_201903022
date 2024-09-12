@@ -78,6 +78,12 @@
 
  * @typedef {import('./nodos').instClass} instClass
 
+
+ * @typedef {import('./nodos').getStruct} getStruct
+
+
+ * @typedef {import('./nodos').setStruct} setStruct
+
  */
 
 
@@ -319,6 +325,24 @@ export class BaseVisitor {
      */
     visitinstClass(node) {
         throw new Error('Metodo visitinstClass no implementado');
+    }
+    
+
+    /**
+     * @param {getStruct} node
+     * @returns {any}
+     */
+    visitgetStruct(node) {
+        throw new Error('Metodo visitgetStruct no implementado');
+    }
+    
+
+    /**
+     * @param {setStruct} node
+     * @returns {any}
+     */
+    visitsetStruct(node) {
+        throw new Error('Metodo visitsetStruct no implementado');
     }
     
 }

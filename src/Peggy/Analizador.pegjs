@@ -27,6 +27,10 @@
       'ternario':nodos.tern, 
       'DclStruct':nodos.DclStruct, 
       'instClass':nodos.instClass,
+      'getStruct':nodos.getStruct, 
+      'setStruct':nodos.setStruct, 
+
+   
     
     }
 
@@ -113,16 +117,29 @@ DefaultExp = "default" _ ":" _  stmt:Declaracion*{
 
 Identificador = !ReseveredWords [a-zA-Z][a-zA-Z0-9]* { return text() }
 
-Expresion = Asignacion
-
-
+Expresion = Asignation
 
 PrintComa = exp:Expresion _ params:("," _ exp1:Expresion 
   { return exp1 })* { return [exp, ...params] }
 
-Asignacion = id:Identificador _ tipoA:asignTypes _ asgn:Asignacion { return crearNodo('asignacion', { id, asgn,op:tipoA }) }
-          /Ternario
-          / Logical
+
+
+Asignation = asgndVlalue:Called _ type:asignTypes _ asgn:Asignation
+{ 
+  console.log('asignation: ', type)
+  console.log({asgndVlalue});
+  if (asgndVlalue instanceof nodos.ReferenciaVariable) {
+    console.log('Refeerenciaaa De Variableeeeeeeeeeee');
+    return crearNodo('asignacion', { id:asgndVlalue.id, asgn:asgn,op:type })
+    
+  }
+   if (!(asgndVlalue instanceof nodos.getStruct)) {
+        throw new Error('Solo se pueden asignar valores a propiedades de objetos')
+    }   
+          
+}
+/Ternario
+/Logical
 
 asignTypes = ("="/"+="/"-="/"*="/"/=" /":") {return text()}
 
@@ -192,7 +209,8 @@ Multiplicacion = izq:Unaria expansion:(
 
 Unaria = "-" _ num:Unaria { return crearNodo('unaria', { op: '-', exp: num }) }
         /"!" _ num:Unaria { return crearNodo('unaria', { op: '!', exp: num }) }
-       / Llamada
+     //  / Llamada
+     /Called
 
 Unarytypes = "-" { 
   return "-" 
@@ -211,7 +229,34 @@ Llamada = callee:Numero _ params:("(" args:Argumentos? ")" { return args })* {
     callee
   )
 }
-/"."id:Identificador
+
+Called = callee:Numero operaciones:(
+  "("_  args:Argumentos?  _")"{ 
+    return { args,tipo:'llamada'} }
+  / "." _ id:Identificador _ { 
+    return {  args:id,tipo:'getStruct'}
+      }
+)*
+{ 
+  console.log('Called',callee,operaciones)  
+      const call = operaciones.reduce( 
+        (callee, args) => {
+          console.log(`Calle ${callee} , args ${args}`)
+          const { tipo,id,args:argumentos } = args
+          if(tipo === 'llamada'){
+            return crearNodo('llamada', { callee, args: argumentos || [] })
+          }else if (tipo === 'getStruct'){
+            return crearNodo('getStruct', { id:callee, propertie:args })
+          }
+        },
+        callee
+      )
+      console.log('llamada',{call},{text:text()});
+      return call
+  
+}
+
+
 
 Argumentos = arg:Expresion _ args:("," _ exp:Expresion { 
   return exp })* { return [arg, ...args] }
@@ -226,8 +271,7 @@ Numero = [0-9]+( "." [0-9]+ )+ {return crearNodo('primitive', { typeD:'float', v
   / "(" _ exp:Expresion _ ")" { return crearNodo('agrupacion', { exp }) }
   / id:Identificador _ "{" _ argsI:Argumentos?  _ "}" _ ptcoma:(":")? { 
     console.log('Instancia ', id, argsI)
-    return crearNodo('instClass',{ id,args:argsI }) 
-  
+    return crearNodo('instClass',{ id,args:argsI })   
   }
   / id:Identificador {  return crearNodo('referenciaVariable', { id }) }
 
@@ -238,6 +282,9 @@ Comments = "//" (![\n] .)*
             / "/*" (!("*/") .)* "*/"
 
 ReseveredWords = ("int"
+  /_"int"_{ 
+    console.log('typeofReservedWord');
+  }
   /"if"
   /"else"
   /"while"
