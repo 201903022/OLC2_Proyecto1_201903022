@@ -54,40 +54,28 @@ export class StructIn extends Invocable{
         console.log('\t Inteprete: ', interprete)
         console.log('\t Args: ', args)
         const struct = new Instances(this);
-
-        //
         Object.entries(this.properties).forEach(
             ([key,value]) => {
                 console.log('value')
                 console.log(value)
-                //key
                 console.log('key')
                 console.log(key)
-
                 struct.set(key,value);
             }
         );
-
         args.forEach(
-            (arg,i) => { 
-                console.log('arg.id')
-                console.log(arg.id)
-                console.log('arg')
-                console.log(arg.asgn)
-                console.log('i')
-                console.log(i)
-                struct.set(arg.id,arg.asgn);
+            (arg) => { 
+                const valueAsg = arg.asgn.accept(interprete);
+                struct.set(arg.id,valueAsg);
             }
         );
         console.log('This properties now')
         console.log(struct.properties)
-
         const cstr = this.getMethdo('constructor')
         if(cstr){ 
             cstr.atar(struct).invocar(interprete,args);
         }
         return struct;
-
 
     }
 
