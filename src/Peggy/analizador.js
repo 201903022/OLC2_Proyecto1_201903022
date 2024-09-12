@@ -370,16 +370,19 @@ function peg$parse(input, options) {
   var peg$f44 = function(asgndVlalue, type, asgn) { 
   console.log('asignation: ', type)
   console.log({asgndVlalue});
+  console.log({asgn})
   if (asgndVlalue instanceof nodos.ReferenciaVariable) {
     console.log('Refeerenciaaa De Variableeeeeeeeeeee');
-    return crearNodo('asignacion', { id:asgndVlalue.id, asgn:asgn,op:type })
-    
+    return crearNodo('asignacion', { id:asgndVlalue.id, asgn:asgn,op:type })    
   }
    if (!(asgndVlalue instanceof nodos.getStruct)) {
-        throw new Error('Solo se pueden asignar valores a propiedades de objetos')
-    }
-    
-          
+     throw new Error('Solo se pueden asignar valores a propiedades de objetos')
+    }   
+    console.log('asgnVlalue')
+     console.log({asgndVlalue});
+    console.log('tipoSetStrucccccccccct')
+    console.log({asgn})
+  return crearNodo('setStruct', { id:asgndVlalue.id, propertie:asgndVlalue, value:asgn })          
 };
   var peg$f45 = function() {return text()};
   var peg$f46 = function(cond, stmtTrue, stmtFalse) { 

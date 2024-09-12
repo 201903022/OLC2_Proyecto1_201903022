@@ -820,13 +820,13 @@ export class InterpreteVisitor extends BaseVisitor {
         console.log(node.id)
         const instance = node.id.accept(this);
         console.log('Instance')
-        console.log(instance.value.properties.edad.value)
+       // console.log(instance.value.properties.edad.value)
         const property = node.propertie;
         console.log('Property')
-        console.log(property)
+        console.log(property)      
         return new Dato(
             property,
-            instance.value.properties[property].value,
+            instance.value.properties[property.args].value,
             node.location
         )
         
@@ -840,14 +840,22 @@ export class InterpreteVisitor extends BaseVisitor {
     visitsetStruct(node){ 
         console.log('Visit setStruct')
         console.log(node)
-        /*
-        const instance = node.id.accept(this);
-        const property = node.propertie;
-        const value = node.value.accept(this);
-        instance.value.properties[property] = value;
-        return instance;
-        */
-
+        const propChange = node.propertie.propertie.args; //.propertie
+        console.log('..')
+        console.log(propChange)
+        const instance = node.id.accept(this); 
+        console.log('instance')
+        console.log(instance.value)
+        const value = instance.value
+        if (value instanceof Instances) {
+            console.log('Es instancia')
+            console.log('Properties')
+            console.log(value.properties)
+            value.set(propChange,node.value.accept(this))
+            
+        }
+        console.log("Se cabmio el valor ")
+        console.log(this.environment)
     }
     
 
