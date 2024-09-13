@@ -77,13 +77,10 @@ export const embebidas = {
     }),
     //typeof
     'typeof': new NativeFunction(() => 1,(a,b) => { 
-        console.log('b: ', b[0].location)
+        console.log('b: ', b[0].type)
         const value = b[0].value;
-
-        if (typeof(value) === 'number') {
-            return new Dato('string',Number.isInteger(value)? 'int':'float',b[0].location)            
-        }
-        return new Dato('string',typeof(b[0].value),b[0].location)
+        console.log(b[0].type)
+        return new Dato('string',b[0].type,b[0].location)
     }),
     //object.entries
     'entries': new NativeFunction(() => 1,(a,b) => { 

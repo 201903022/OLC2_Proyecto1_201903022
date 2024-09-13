@@ -16,3 +16,4 @@ Persona persona1 = Persona{
 };
 System.out.println(persona1.nombre);
 System.out.println( Object.keys(persona1));
+System.out.println( typeof(persona1));

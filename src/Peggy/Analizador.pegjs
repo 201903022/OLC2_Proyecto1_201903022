@@ -29,10 +29,7 @@
       'instClass':nodos.instClass,
       'getStruct':nodos.getStruct, 
       'setStruct':nodos.setStruct, 
-      'entries':nodos.entries, 
-
-   
-    
+      'entries':nodos.entries,        
     }
 
     const nodo = new tipos[tipoNodo](props)

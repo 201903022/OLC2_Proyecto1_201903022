@@ -879,18 +879,16 @@ export class InterpreteVisitor extends BaseVisitor {
               //  console.log(value)
                 strProp += key + ','
             })
-            //take off last ","
-            console.log(entries)
             strProp = strProp.slice(0,-1);
             return new Dato(
-                'entries'
+                'string'
                 ,strProp
                 ,node.location
             )
         }
 
         return new Dato(
-            'entries'
+            'null'
             ,null
             ,node.location
         )
