@@ -234,7 +234,7 @@ Llamada = callee:Numero _ params:("(" args:Argumentos? ")" { return args })* {
   )
 }
 
-Called = callee:Numero operaciones:(
+Called = callee:Numero  operaciones:(
   "("_  args:Argumentos?  _")"{ 
     return { args,tipo:'llamada'} }
   / "." _ id:Identificador _ { 
@@ -269,7 +269,9 @@ Numero = [0-9]+( "." [0-9]+ )+ {return crearNodo('primitive', { typeD:'float', v
   / [0-9]+ {return crearNodo('primitive', { typeD:'int', value:Number(text(),0)  }) }
   / '"' [^\"]* '"' {return crearNodo('primitive', { typeD:'string', value:text().slice(1,-1) }) }
   / "'" [^\']* "'" {return crearNodo('primitive', { typeD:'char', value:text().slice(1,-1) }) }
-  / "true"   {return crearNodo('primitive', { typeD:'bool', value:true  }) }
+  / "true"   {
+    console.log('true peggy' )
+    return crearNodo('primitive', { typeD:'bool', value:true  }) }
   / "false" {return crearNodo('primitive', { typeD:'bool', value:false  }) }
   / "null" {return crearNodo('primitive', { typeD:'null', value:null  }) }
   / "(" _ exp:Expresion _ ")" { return crearNodo('agrupacion', { exp }) }
@@ -285,7 +287,10 @@ _ = ([ \t\n\r] / Comments)*
 Comments = "//" (![\n] .)*
             / "/*" (!("*/") .)* "*/"
 
-ReseveredWords = ("int"
+ReseveredWords = ("int"{ 
+  console.log('typeofReservedWord');
+  
+}
   /_"int"_{ 
     console.log('typeofReservedWord');
   }
