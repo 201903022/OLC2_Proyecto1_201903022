@@ -84,6 +84,9 @@
 
  * @typedef {import('./nodos').setStruct} setStruct
 
+
+ * @typedef {import('./nodos').entries} entries
+
  */
 
 
@@ -343,6 +346,15 @@ export class BaseVisitor {
      */
     visitsetStruct(node) {
         throw new Error('Metodo visitsetStruct no implementado');
+    }
+    
+
+    /**
+     * @param {entries} node
+     * @returns {any}
+     */
+    visitentries(node) {
+        throw new Error('Metodo visitentries no implementado');
     }
     
 }

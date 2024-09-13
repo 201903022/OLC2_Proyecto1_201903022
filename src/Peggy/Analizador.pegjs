@@ -29,6 +29,7 @@
       'instClass':nodos.instClass,
       'getStruct':nodos.getStruct, 
       'setStruct':nodos.setStruct, 
+      'entries':nodos.entries, 
 
    
     
@@ -52,8 +53,8 @@ VarDcl = tipo:TypesValues _ id:Identificador _ asigna:("=" _ exp:Expresion{retur
 DclFunc = tipo:TypesValues _  id:Identificador "(" _ params:Parametros? _ ")" _ bloque:Bloque { 
   console.log('DclFunc')
   return crearNodo('DclFunc',{ type:tipo,id,params:params || [],bloque})
-}
-DclStruct = "struct" _ id:Identificador _ "{" _ bodyC:DcslsStruct* _ "}"{ 
+} 
+DclStruct = "struct" _ id:Identificador _ "{" _ bodyC:DcslsStruct* _ "}" _ ptcoma:(";")? { 
   console.log('DeclClass : ', id , ' body: ', bodyC)
   return crearNodo('DclStruct',{ id,properties:bodyC })
 }
@@ -274,6 +275,10 @@ Numero = [0-9]+( "." [0-9]+ )+ {return crearNodo('primitive', { typeD:'float', v
     return crearNodo('primitive', { typeD:'bool', value:true  }) }
   / "false" {return crearNodo('primitive', { typeD:'bool', value:false  }) }
   / "null" {return crearNodo('primitive', { typeD:'null', value:null  }) }
+  /"object.keys(" _ exp:Expresion _ ")" { 
+    return crearNodo('entries', {value:exp }) 
+  
+  }
   / "(" _ exp:Expresion _ ")" { return crearNodo('agrupacion', { exp }) }
   / id:Identificador _ "{" _ argsI:Argumentos?  _ "}" _ ptcoma:(":")? { 
     console.log('Instancia ', id, argsI)

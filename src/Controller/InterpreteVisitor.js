@@ -820,7 +820,6 @@ export class InterpreteVisitor extends BaseVisitor {
         console.log(node.id)
         const instance = node.id.accept(this);
         console.log('Instance')
-       // console.log(instance.value.properties.edad.value)
         const property = node.propertie;
         console.log('Property')
         console.log(property)      
@@ -841,8 +840,6 @@ export class InterpreteVisitor extends BaseVisitor {
         console.log('Visit setStruct')
         console.log(node)
         const propChange = node.propertie.propertie.args; //.propertie
-        console.log('..')
-        console.log(propChange)
         const instance = node.id.accept(this); 
         console.log('instance')
         console.log(instance.value)
@@ -856,6 +853,49 @@ export class InterpreteVisitor extends BaseVisitor {
         }
         console.log("Se cabmio el valor ")
         console.log(this.environment)
+    }
+/**
+ *  
+ * @type{BaseVisitor['visitentries']}
+ *  
+ */ 
+    visitentries(node){ 
+        console.log('Visi object entries')
+       // console.log(node)
+        const instance = node.value.accept(this);
+       // console.log('Instance')
+       // console.log(instance)
+
+        if (instance.value instanceof Instances) {
+          //  console.log('Es instancia')
+          //  console.log('Properties')
+            const properties = instance.value.properties;
+           // console.log(properties)
+            let strProp = '';
+            const entries = Object.entries(properties).map(([key,value]) => {
+              //  console.log('Key')
+              //  console.log(key)
+              //  console.log('Value')
+              //  console.log(value)
+                strProp += key + ','
+            })
+            //take off last ","
+            console.log(entries)
+            strProp = strProp.slice(0,-1);
+            return new Dato(
+                'entries'
+                ,strProp
+                ,node.location
+            )
+        }
+
+        return new Dato(
+            'entries'
+            ,null
+            ,node.location
+        )
+
+
     }
     
 

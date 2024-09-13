@@ -936,4 +936,29 @@ export class setStruct extends Expresion {
     }
 }
     
-export default { Expresion, Primitive, OperacionBinaria, OpLogica, OperacionUnaria, Agrupacion, Numero, DeclaracionVariable, ReferenciaVariable, Print, Sout, ExpresionStmt, Asignacion, Bloque, If, While, Break, Continue, Return, Switch, For, Llamada, DclFunc, tern, DclStruct, instClass, getStruct, setStruct }
+export class entries extends Expresion {
+
+    /**
+    * @param {Object} options
+    * @param {Expresion} options.value Identificador de la clase
+    */
+    constructor({ value }) {
+        super();
+        
+        /**
+         * Identificador de la clase
+         * @type {Expresion}
+        */
+        this.value = value;
+
+    }
+
+    /**
+     * @param {BaseVisitor} visitor
+     */
+    accept(visitor) {
+        return visitor.visitentries(this);
+    }
+}
+    
+export default { Expresion, Primitive, OperacionBinaria, OpLogica, OperacionUnaria, Agrupacion, Numero, DeclaracionVariable, ReferenciaVariable, Print, Sout, ExpresionStmt, Asignacion, Bloque, If, While, Break, Continue, Return, Switch, For, Llamada, DclFunc, tern, DclStruct, instClass, getStruct, setStruct, entries }

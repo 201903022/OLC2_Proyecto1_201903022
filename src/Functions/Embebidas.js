@@ -85,5 +85,10 @@ export const embebidas = {
         }
         return new Dato('string',typeof(b[0].value),b[0].location)
     }),
+    //object.entries
+    'entries': new NativeFunction(() => 1,(a,b) => { 
+        const value = b[0].value;        
+    }
+)
 
 };

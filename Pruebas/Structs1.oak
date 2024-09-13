@@ -15,3 +15,4 @@ Persona persona1 = Persona{
     estatura: 1.75
 };
 System.out.println(persona1.nombre);
+System.out.println( Object.keys(persona1));
