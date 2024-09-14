@@ -2,6 +2,9 @@ import {InterpreteVisitor} from './src/Controller/InterpreteVisitor.js'
 import {parse} from './src/Peggy/analizador.js'
 import {ErrorsArr} from './src/Tables/Errors.js'
 let errorTable, symbolTable, OakdEditor, consoleResult, dotStringCst = "";
+import {SymbolClass} from './src/Tables/Tokens.js'
+import {ErrorClass,getErrorsTH} from './src/Tables/Errors.js'
+let sybmolsToken = []; 
 /*Scrips Code Mirror */
 $(document).ready(function () {
     OakdEditor = editor('editor');
@@ -24,7 +27,16 @@ function editor(id, language, lineNumbers = true, readOnly = false, styleActiveL
 /**
  * Tabla de Errores 
  */
-function getErrors(e) {
+function getErrors() {
+    let errorsTable = getErrorsTH()
+    console.log('liErrors getErrors')
+    console.log(errorTable)
+    //add to errors-report
+    let reportedHtml = document.getElementById('errors-report')
+    reportedHtml.innerHTML = ''
+    reportedHtml.innerHTML = errorsTable
+
+    console.log('Get Errors')
 
 
 }
@@ -32,7 +44,40 @@ function getErrors(e) {
  * Tabla de simbolos 
  */
 function getSymbolsTable() {
+    console.log('liErrors getSymbolsTable')
+    //add to symb-report
+    let reportedHtml = document.getElementById('symb-report')
+    reportedHtml.innerHTML = ''
 
+
+    let codeTable = '';
+    codeTable += '<thead>'
+    codeTable += '<tr>'
+    codeTable += '<th scope="col">#</th>'
+    codeTable += '<th scope="col">Name</th>'
+    codeTable += '<th scope="col">Type</th>'
+    codeTable += '<th scope="col">TypeDte</th>'
+    codeTable += '<th scope="col">Env</th>'
+    codeTable += '<th scope="col">Line</th>'
+    codeTable += '<th scope="col">Column</th>'
+    codeTable += '</tr>'
+    codeTable += '</thead>'
+    codeTable += '<tbody>'
+    sybmolsToken.forEach((a, index) => {
+        codeTable += '<tr>'
+        codeTable += `<th scope="row">${index}</th>`
+        codeTable += `<td>${a.name}</td>`
+        codeTable += `<td>${a.type}</td>`
+        codeTable += `<td>${a.typeDte}</td>`
+        codeTable += `<td>${a.env}</td>`
+        codeTable += `<td>${a.line}</td>`
+        codeTable += `<td>${a.column}</td>`
+        codeTable += '</tr>'
+    })
+    codeTable += '</tbody>'
+    console.log('*******Symbols*******')
+    console.log(codeTable)
+    reportedHtml.innerHTML = codeTable
 }
 
 /**
@@ -125,6 +170,48 @@ const analysis = async () => {
         console.log('*******Interpete*******')
         console.log(Interpete.outPut)
         consoleResult.setValue(Interpete.outPut)
+        console.log('Enviroment final ')
+        console.log(Interpete.environment)
+
+        //forEach Variable
+        const symbols = Interpete.environment.variables;
+        console.log('*******Symbols*******')
+        console.log(symbols)
+        let contSymbols = 0;
+        //clean 
+        sybmolsToken = []
+        for (let key in symbols) {
+            if (symbols.hasOwnProperty(key)) {
+                const valueKey = symbols[key]
+                let line = '';
+                let column = '';
+                if (valueKey.location) {
+                    line = valueKey.location.start.line
+                    column = valueKey.location.start.column
+                }
+                if(valueKey.type !== 'function'){ 
+                    const symbol = new SymbolClass(key, 'variable', valueKey.type, 'global', line, column)
+                    console.log('symbol: ')
+                    console.log(symbol)
+                    sybmolsToken.push(symbol)
+                }else{ 
+                    if (valueKey.location) {
+                        
+                    }
+                    const symbol = new SymbolClass(key, 'function', valueKey.type, 'global', line, column)
+                    console.log('symbol: ')
+                    console.log(symbol)
+                    sybmolsToken.push(symbol)
+                }                
+            }
+            contSymbols++;
+        }
+        //forEach Function
+        console.log('Symboooooools')
+        console.log(sybmolsToken)
+
+        //create table html 
+
         console.log('*******Errors*******')
         console.log("====================")
         console.log(ErrorsArr)
@@ -156,16 +243,20 @@ const btnClean = document.getElementById('clearButton'),
     btnOpen = document.getElementById('btn__open'),
     btnSave = document.getElementById('btn__save'),
     btnAnalysis = document.getElementById('btn__analysis'),
-    btnT = document.getElementById('btn__t');
+    btnT = document.getElementById('btn__t'),
+    liErrors = document.getElementById('ErrorTables'),
+    liSymbols = document.getElementById('SymbolTables')
+    
 
-
+   // ErrorTables
 
 
 btnOpen.addEventListener('click', () => openFile(OakdEditor));
 btnClean.addEventListener('click', () => cleanEditor(OakdEditor));
 btnAnalysis.addEventListener('click', () => analysis());
 btnSave.addEventListener('click', () => saveFile());
-btnT.addEventListener('click', () => graphVCST());
+liErrors.addEventListener('click', () => getErrors());
+liSymbols.addEventListener('click', () => getSymbolsTable());
 
 
 

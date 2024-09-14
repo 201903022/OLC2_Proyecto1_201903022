@@ -1,4 +1,5 @@
 import {StructIn} from './StructsIn.js'
+import {ErrorsArr,ErrorClass} from '../Tables/Errors.js'
 
 export class Instances { 
 
@@ -13,20 +14,21 @@ export class Instances {
 
     set(name,value){ 
         console.log(`Setting: ${name} -> ${value.value}`)
-        console.log('Valueee setting ',value)
         const prop = this.properties[name]
-        console.log(`prop ${prop}`)
         if (prop) {
-            console.log('prop not undefined')
-            console.log('progp type : ', prop.type)
-
-            console.log('value type : ', value.type)
             if (prop.type === value.type) {
                 console.log('same prop type and value type')
                 console.log(`${prop.type}  == ${value.type}`)
                 this.properties[name] = value;
                this.properties[name] = value;
                 return;
+            }else{ 
+                let errStr = `${name} ${prop.type} != ${value.type} `
+                let line = value.location.start.line
+                let column = value.location.start.column
+                let type = 'Semantico'
+                let err = new ErrorClass(ErrorCounts,errStr,line,column,type)
+                ErrorsArr.push(err)
             }
         }else{             
             this.properties[name] = value;

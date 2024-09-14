@@ -40,9 +40,16 @@ export class Environment{
                 this.variables[name] = value;
                 return;
             }else{ 
+                let line ='';
+                let column = '';
+                if (value.location) {
+                    line = value.location.start.line
+                    column = value.location.start.column
+                }
+
                 const errStr = `Type mismatch ${CurrentValue.type} != ${value.type} in "${name}"   ${value.value} is not ${CurrentValue.type} `
                 console.log(errStr)
-                const errToSave = new ErrorClass(ErrorCounts,errStr,1,1,"semantico")
+                const errToSave = new ErrorClass(ErrorCounts,errStr,line,column,"semantico")
                 ErrorsArr.push(errToSave)
                 console.log(errStr)
                 return;
@@ -54,7 +61,13 @@ export class Environment{
         }   
         //const errStr = `Type mismatch ${CurrentValue.type? CurrentValue.type:'false'} != ${CurrentValue.type? CurrentValue.type:'false'} in "${name}"   ${value.value} is not ${CurrentValue.type? CurrentValue.type:'false'} `
         const errStr = `Type mismatch set variable ${name} `
-        const errToSave = new ErrorClass(ErrorCounts,`variable "${name}" is undefined`,1,1,"semantico")
+        let line ='';
+        let column = '';
+        if (value.location) {
+            line = value.location.start.line
+            column = value.location.start.column
+        }
+        const errToSave = new ErrorClass(ErrorCounts,`variable "${name}" is undefined`,line,column,"semantico")
         ErrorsArr.push(errToSave)
         console.log(errStr)
         return;        
@@ -72,6 +85,12 @@ export class Environment{
 
         if (!cuurrentValue && this.before) { 
             return this.before.getVariable(name);            
+        }
+        let line ='';
+        let column = '';
+        if (value.location) {
+            line = value.location.start.line
+            column = value.location.start.column
         }
         const errToSave = new ErrorClass(ErrorCounts,`Variabel "${name}" aint defined`, value.location.start.line,value.location.start.column, "sintactico")
         console.log('Type mismatch')
@@ -95,6 +114,12 @@ export class Environment{
                     this.variables[name] = datoToSave;
                     return;
                 }else{ 
+                    let line ='';
+                    let column = '';
+                    if (value.location) {
+                        line = value.location.start.line
+                        column = value.location.start.column
+                    }
                     const errToSave = `Variable var ${name} must have exp`
                     const errStr = new ErrorClass(ErrorCounts,errToSave, value.location.start.line,value.location.start.column, "sintactico")
                     ErrorsArr.push(errStr)
@@ -158,11 +183,16 @@ export class Environment{
                 console.log(value.type)
                 console.log('value.value')
                 console.log(value.value)
-
+                let line ='';
+                let column = '';
+                if (value.location) {
+                    line = value.location.start.line
+                    column = value.location.start.column
+                }
                 const datoToSave = new Dato(typeD,null,value.location);
                 this.variables[name] = datoToSave;
                 const errStr = `Type mismatch ${name} is ${typeD}`
-                const errToSave = new ErrorClass(ErrorCounts,errStr, 1,1, "sintactico")
+                const errToSave = new ErrorClass(ErrorCounts,errStr, line,column, "sintactico")
                 console.log('Type mismatch')
                 console.log(errToSave)
                 console.log(value)
