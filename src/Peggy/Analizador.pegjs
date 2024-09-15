@@ -273,13 +273,10 @@ Numero = [0-9]+( "." [0-9]+ )+ {return crearNodo('primitive', { typeD:'float', v
   / "false" {return crearNodo('primitive', { typeD:'bool', value:false  }) }
   / "null" {return crearNodo('primitive', { typeD:'null', value:null  }) }
   /"object.keys(" _ exp:Expresion _ ")" { 
-    return crearNodo('entries', {value:exp }) 
-  
+    return crearNodo('entries', {value:exp })   
   }
   / "(" _ exp:Expresion _ ")" { return crearNodo('agrupacion', { exp }) }
-  / id:Identificador _ "{" _ argsI:Argumentos?  _ "}" _ ptcoma:(":")? { 
-    console.log('Instancia ', id, argsI)
-    return crearNodo('instClass',{ id,args:argsI })   
+  / id:Identificador _ "{" _ argsI:Argumentos?  _ "}" _ ptcoma:(":")? {     return crearNodo('instClass',{ id,args:argsI })   
   }
   / id:Identificador {  return crearNodo('referenciaVariable', { id }) }
 

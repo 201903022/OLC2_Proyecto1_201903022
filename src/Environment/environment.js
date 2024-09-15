@@ -6,12 +6,10 @@ export class Environment{
     /**
      * @param {Environment} before
      */
-
     constructor( before = undefined) { 
          this.before = before; 
          this.variables = {};
     }
-
     /**
      * @param {string} id
      * @param {any} value
@@ -214,8 +212,5 @@ export class Environment{
         //ErrorCounts++;
         return;
     }
-
-
-
         
 }

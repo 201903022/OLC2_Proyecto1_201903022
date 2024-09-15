@@ -13,19 +13,18 @@ export class InterpreteVisitor extends BaseVisitor {
     
     constructor() {
         super();
+        //su entorno//(undefined )ya que no debe existir un anterior al global
         this.environment = new Environment(undefined);
         this.outPut = '';
-        //clean errosArr
         ErrorsArr.splice(0,ErrorsArr.length)
         //funciones embebidas: 
         Object.entries(embebidas).forEach(([nombre,funcion]) => { 
             this.environment.assignVariable(nombre,funcion,'function')
         });
-
         /**
          * @type {Expresion|null}
          */
-        this.prevContinue = null;
+        this.prevContinue = null; // manejo de nivel anterior como ciclos, switch, funciones
     }
 
     interpret(nodo){ 

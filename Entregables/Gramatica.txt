@@ -1,0 +1,121 @@
+programa = _ dcl:Declaracion* _ 
+Declaracion =  dcl:DclStruct _ 
+            /  dcl:VarDcl _ 
+            / dcl:DclFunc  _ 
+            / stmt:Stmt _ 
+
+VarDcl = tipo:TypesValues _ id:Identificador _ asigna:("=" _ exp:Expresion)? _ ";" 
+
+DclFunc = tipo:TypesValues _  id:Identificador "(" _ params:Parametros? _ ")" _ bloque:Bloque 
+
+DclStruct = "struct" _ id:Identificador _ "{" _ bodyC:DcslsStruct* _ "}" _ ptcoma:(";")? 
+
+DcslsStruct = dcl:VarDcl _ 
+          / dcl:DclFunc _ 
+
+Parametros = tipo:TypesValues _ id:Identificador _ params:("," _ tipo1:TypesValues _ ids:Identificador { 
+      })* 
+
+TypesValues = "int" 
+          / "float" 
+          / "string" 
+          / "char" 
+          / "bool" 
+          / "var" 
+          / "void" 
+          / id:Identificador 
+
+Stmt = "print(" _ exp:Expresion _ ")" _ ";" 
+    / "system.out.println(" _ exp:PrintComa _ ")" _ ";" 
+    / "switch" _ "(" _ exp:Expresion _ ")" _ "{" _ cases:MultipleCases _ smtDef:(_ defaultE:DefaultExp) ? _ "}" 
+    / bl:Bloque 
+    / "if" _ "(" _ cond:Expresion _ ")" _ stmtTrue:Stmt 
+      stmtFalse:( _ "else" _ stmtFalse:Stmt )? 
+    / "while" _ "(" _ cond:Expresion _ ")" _ stmt:Stmt 
+    / "for" _ "(" _ init:FortBegining _  cond:Expresion _ ";" _ inc:Expresion ")" _ stmt:Stmt 
+    / "break" _ ";" 
+    / "continue" _ ";" 
+    / "return" _ exp:Expresion? _ ";" 
+    / exp:Expresion _ ";" 
+
+FortBegining = dcl:VarDcl 
+            / exp:Expresion _ ";" 
+            / ";" 
+
+Bloque = "{" _ dcls:Declaracion* _ "}" 
+
+MultipleCases = "case" _ exp:Expresion _ ":" _ stm:Declaracion* _ cases:(_ "case" _ exp1:Expresion _ ":" _ stm1:Declaracion* )* 
+
+DefaultExp = "default" _ ":" _  stmt:Declaracion* 
+
+Identificador = !ReseveredWords [a-zA-Z][a-zA-Z0-9]* 
+
+Expresion = Asignation 
+
+PrintComa = exp:Expresion _ params:("," _ exp1:Expresion)* 
+
+Asignation = asgndVlalue:Called _ type:asignTypes _ asgn:Asignation 
+
+asignTypes = ("=" / "+=" / "-=" / "*=" / "/=" / "%=" / ":") 
+
+Ternario = cond:Logical _ "?" _ stmtTrue:Expresion _ ":" _ stmtFalse:Expresion 
+
+Logical = izq:Equality expansion:( _ op:("&&" / "||") _ der:Equality)* 
+
+Equality = izq:Relational expansion:( _ op:("==" / "!=") _ der:Relational)* 
+
+Relational = izq:Suma expansion:( _ op:(">=" / "<=" / ">" / "<") _ der:Suma)* 
+
+Suma = izq:Multiplicacion expansion:( _ op:("+" / "-") _ der:Multiplicacion)* 
+
+Multiplicacion = izq:Unaria expansion:( _ op:("*" / "/" / "%") _ der:Unaria)* 
+
+Unaria = "-" _ num:Unaria 
+        / "!" _ num:Unaria 
+        / Called 
+
+Unarytypes = "-" 
+  / "!" 
+
+Llamada = callee:Values _ params:("(" args:Argumentos? ")" )* 
+
+Called = callee:Values  operaciones:( "("_  args:Argumentos?  _ ")" 
+  / "." _ id:Identificador )* 
+
+Argumentos = arg:Expresion _ args:("," _ exp:Expresion)* 
+
+Values = [0-9]+( "." [0-9]+ )+ 
+  / [0-9]+ 
+  / '"' [^\"]* '"' 
+  / "'" [^\']* "'" 
+  / "true" 
+  / "false" 
+  / "null" 
+  / "object.keys(" _ exp:Expresion _ ")" 
+  / "(" _ exp:Expresion _ ")" 
+  / id:Identificador _ "{" _ argsI:Argumentos?  _ "}" 
+  / id:Identificador 
+
+_ = ([ \t\n\r] / Comments)*
+
+Comments = "//" (![\n] .)* 
+          / "/*" (!("*/") .)* "*/"
+
+ReseveredWords = "int" 
+  / "if" 
+  / "else" 
+  / "while" 
+  / "for" 
+  / "switch" 
+  / "case" 
+  / "default" 
+  / "break" 
+  / "continue" 
+  / "return" 
+  / "print" 
+  / "system.out.println" 
+  / "struct" 
+  / "void" 
+  / "char" 
+  / "float" 
+  / "string"

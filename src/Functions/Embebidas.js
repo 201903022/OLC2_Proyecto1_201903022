@@ -8,14 +8,6 @@ class NativeFunction extends Invocable{
         this.invocar = func
     }
 }
-//aqui van las funciones nativas del enunciado: 
-//parseInt
-//parseFloat
-//toString
-//toLowerCase
-//toUpperCase
-//typeOf
-
 export const embebidas = {
     'time': new NativeFunction(() => 0, () => { 
         console.log('HolaMundo TIMEEEEEEEEE')

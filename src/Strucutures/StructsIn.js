@@ -50,16 +50,9 @@ export class StructIn extends Invocable{
     */
 
     invocar(interprete,args){ 
-        console.log('Invocar Structura')
-        console.log('\t Inteprete: ', interprete)
-        console.log('\t Args: ', args)
         const struct = new Instances(this);
         Object.entries(this.properties).forEach(
             ([key,value]) => {
-                console.log('value')
-                console.log(value)
-                console.log('key')
-                console.log(key)
                 struct.set(key,value);
             }
         );
@@ -69,8 +62,6 @@ export class StructIn extends Invocable{
                 struct.set(arg.id,valueAsg);
             }
         );
-        console.log('This properties now')
-        console.log(struct.properties)
         const cstr = this.getMethdo('constructor')
         if(cstr){ 
             cstr.atar(struct).invocar(interprete,args);

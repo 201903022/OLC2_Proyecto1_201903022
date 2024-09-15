@@ -4,6 +4,7 @@ import {ErrorsArr} from './src/Tables/Errors.js'
 let errorTable, symbolTable, OakdEditor, consoleResult, dotStringCst = "";
 import {SymbolClass} from './src/Tables/Tokens.js'
 import {ErrorClass,getErrorsTH} from './src/Tables/Errors.js'
+import {reservedWords} from './src/Enums/reservedWords.js'
 let sybmolsToken = []; 
 /*Scrips Code Mirror */
 $(document).ready(function () {
@@ -45,11 +46,8 @@ function getErrors() {
  */
 function getSymbolsTable() {
     console.log('liErrors getSymbolsTable')
-    //add to symb-report
     let reportedHtml = document.getElementById('symb-report')
     reportedHtml.innerHTML = ''
-
-
     let codeTable = '';
     codeTable += '<thead>'
     codeTable += '<tr>'
@@ -67,16 +65,19 @@ function getSymbolsTable() {
         codeTable += '<tr>'
         codeTable += `<th scope="row">${index}</th>`
         codeTable += `<td>${a.name}</td>`
-        codeTable += `<td>${a.type}</td>`
-        codeTable += `<td>${a.typeDte}</td>`
+        if (reservedWords.includes(a.type)) {
+            codeTable += `<td>${a.type}</td>`
+        }else{ 
+            codeTable += `<td>${a.type}</td>`
+        }
+        // codeTable += `<td>struct</td>`
+        codeTable += `<td>${a.typeDte}</td>`            
         codeTable += `<td>${a.env}</td>`
         codeTable += `<td>${a.line}</td>`
         codeTable += `<td>${a.column}</td>`
         codeTable += '</tr>'
     })
     codeTable += '</tbody>'
-    console.log('*******Symbols*******')
-    console.log(codeTable)
     reportedHtml.innerHTML = codeTable
 }
 
@@ -175,8 +176,6 @@ const analysis = async () => {
 
         //forEach Variable
         const symbols = Interpete.environment.variables;
-        console.log('*******Symbols*******')
-        console.log(symbols)
         let contSymbols = 0;
         //clean 
         sybmolsToken = []
@@ -190,31 +189,28 @@ const analysis = async () => {
                     column = valueKey.location.start.column
                 }
                 if(valueKey.type !== 'function'){ 
-                    const symbol = new SymbolClass(key, 'variable', valueKey.type, 'global', line, column)
-                    console.log('symbol: ')
-                    console.log(symbol)
+                    let type = 'variable';
+                    if (reservedWords.includes(valueKey.type)) {
+                        type = 'variable'
+                    }else{ 
+                        type = 'struct'
+                    }
+                    const symbol = new SymbolClass(key, type, valueKey.type, 'global', line, column)
                     sybmolsToken.push(symbol)
                 }else{ 
                     if (valueKey.location) {
                         
                     }
                     const symbol = new SymbolClass(key, 'function', valueKey.type, 'global', line, column)
-                    console.log('symbol: ')
-                    console.log(symbol)
                     sybmolsToken.push(symbol)
                 }                
             }
             contSymbols++;
         }
         //forEach Function
-        console.log('Symboooooools')
-        console.log(sybmolsToken)
 
         //create table html 
 
-        console.log('*******Errors*******')
-        console.log("====================")
-        console.log(ErrorsArr)
 
     } catch (error) {
         let outputError = ''; 
